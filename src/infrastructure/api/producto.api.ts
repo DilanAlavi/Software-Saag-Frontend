@@ -1,15 +1,13 @@
-import axios from 'axios';
 import { ProductoRepositoryPort } from '../../application/producto/producto.port';
-
-const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
+import { httpClient } from './httpClient';
 
 export const productoApiRepository: ProductoRepositoryPort = {
   async listar() {
-    const { data } = await axios.get(`${API_URL}/productos`);
+    const { data } = await httpClient.get('/productos');
     return data;
   },
   async crear(nuevoProducto) {
-    const { data } = await axios.post(`${API_URL}/productos`, nuevoProducto);
+    const { data } = await httpClient.post('/productos', nuevoProducto);
     return data;
   },
 };

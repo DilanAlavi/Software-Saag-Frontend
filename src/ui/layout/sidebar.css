@@ -1,0 +1,119 @@
+:root {
+  --saag-negro: #1a1a1a;
+  --saag-blanco: #ffffff;
+  --saag-beige: #e8e0d3;
+  --saag-beige-oscuro: #cfc3ac;
+  --saag-crema: #faf6ef;
+}
+
+.saag-layout {
+  display: flex;
+  min-height: 100vh;
+  font-family: sans-serif;
+  background: var(--saag-crema);
+}
+
+.saag-topbar {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--saag-negro);
+  color: var(--saag-blanco);
+  padding: 12px 16px;
+}
+
+.saag-topbar button {
+  background: none;
+  border: none;
+  color: var(--saag-blanco);
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.saag-sidebar {
+  width: 260px;
+  background: var(--saag-negro);
+  color: var(--saag-blanco);
+  padding: 20px 0;
+  flex-shrink: 0;
+}
+
+.saag-sidebar-brand {
+  font-size: 20px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  padding: 0 20px 24px;
+  color: var(--saag-beige);
+}
+
+.saag-menu-item {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  color: var(--saag-blanco);
+  padding: 14px 20px;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.saag-menu-item:hover {
+  background: rgba(232, 224, 211, 0.1);
+}
+
+.saag-submenu {
+  display: flex;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.saag-submenu a {
+  color: var(--saag-beige);
+  text-decoration: none;
+  padding: 10px 20px 10px 32px;
+  font-size: 14px;
+  border-left: 3px solid transparent;
+}
+
+.saag-submenu a.activo {
+  border-left: 3px solid var(--saag-beige);
+  color: var(--saag-blanco);
+  font-weight: bold;
+  background: rgba(232, 224, 211, 0.08);
+}
+
+.saag-submenu a:hover {
+  background: rgba(232, 224, 211, 0.1);
+}
+
+.saag-contenido {
+  flex: 1;
+  padding: 24px;
+}
+
+@media (max-width: 768px) {
+  .saag-topbar {
+    display: flex;
+  }
+
+  .saag-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 20;
+    transform: translateX(-100%);
+    transition: transform 0.2s ease-in-out;
+  }
+
+  .saag-sidebar.abierto {
+    transform: translateX(0);
+  }
+
+  .saag-layout {
+    flex-direction: column;
+  }
+}
