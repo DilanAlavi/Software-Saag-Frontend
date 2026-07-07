@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import * as XLSX from 'xlsx';
+import './modal.css';
 
 interface Props {
   visible: boolean;
@@ -30,11 +31,11 @@ export function ModalCredenciales({ visible, nombreCompleto, username, password,
   };
 
   return (
-    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
-      <div style={{ background: '#faf6ef', padding: 24, borderRadius: 8, minWidth: 360, maxWidth: 420 }}>
-        <h3 style={{ marginTop: 0 }}>Usuario creado correctamente</h3>
-        <p style={{ marginBottom: 4 }}>{nombreCompleto}</p>
-        <div style={{ background: '#fff', border: '1px solid #e8e0d3', borderRadius: 6, padding: 12, marginBottom: 16 }}>
+    <div className="saag-modal-overlay">
+      <div className="saag-modal-caja">
+        <h3 style={{ margin: 0 }}>Usuario creado correctamente</h3>
+        <p style={{ margin: 0 }}>{nombreCompleto}</p>
+        <div style={{ background: '#fff', border: '1px solid #e8e0d3', borderRadius: 6, padding: 12, wordBreak: 'break-word' }}>
           <p style={{ margin: '4px 0' }}>
             <strong>Usuario:</strong> {username}
           </p>
@@ -42,10 +43,10 @@ export function ModalCredenciales({ visible, nombreCompleto, username, password,
             <strong>Contraseña:</strong> {password}
           </p>
         </div>
-        <p style={{ fontSize: 13, color: '#a01a1a', marginBottom: 16 }}>
+        <p style={{ fontSize: 13, color: '#a01a1a', margin: 0 }}>
           Guarda esta información ahora — no se volverá a mostrar.
         </p>
-        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+        <div className="saag-modal-acciones">
           <button onClick={copiar} style={botonSecundario}>
             {copiado ? 'Copiado ✓' : 'Copiar'}
           </button>

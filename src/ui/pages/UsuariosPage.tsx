@@ -50,7 +50,7 @@ export function UsuariosPage() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
         <h1 style={{ margin: 0 }}>Usuarios</h1>
         <button
           onClick={() => setMostrarFormulario(true)}

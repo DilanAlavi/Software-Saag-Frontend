@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react';
+import './modal.css';
 
 interface Props {
   visible: boolean;
@@ -11,10 +11,10 @@ export function ModalConfirmacion({ visible, mensaje, onAceptar, onCancelar }: P
   if (!visible) return null;
 
   return (
-    <div style={overlayStyle}>
-      <div style={cajaStyle}>
-        <p style={{ marginBottom: 20, fontSize: 15 }}>{mensaje}</p>
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
+    <div className="saag-modal-overlay">
+      <div className="saag-modal-caja">
+        <p style={{ margin: 0, fontSize: 15 }}>{mensaje}</p>
+        <div className="saag-modal-acciones">
           <button onClick={onCancelar} style={botonSecundario}>
             Cancelar
           </button>
@@ -27,38 +27,20 @@ export function ModalConfirmacion({ visible, mensaje, onAceptar, onCancelar }: P
   );
 }
 
-const overlayStyle: CSSProperties = {
-  position: 'fixed',
-  inset: 0,
-  background: 'rgba(0,0,0,0.5)',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  zIndex: 100,
-};
-
-const cajaStyle: CSSProperties = {
-  background: '#faf6ef',
-  padding: 24,
-  borderRadius: 8,
-  minWidth: 320,
-  maxWidth: 420,
-};
-
-const botonPrimario: CSSProperties = {
+const botonPrimario = {
   background: '#1a1a1a',
   color: '#faf6ef',
   border: 'none',
   padding: '8px 16px',
   borderRadius: 6,
   cursor: 'pointer',
-};
+} as const;
 
-const botonSecundario: CSSProperties = {
+const botonSecundario = {
   background: 'transparent',
   color: '#1a1a1a',
   border: '1px solid #1a1a1a',
   padding: '8px 16px',
   borderRadius: 6,
   cursor: 'pointer',
-};
+} as const;

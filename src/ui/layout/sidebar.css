@@ -36,6 +36,25 @@
   color: var(--saag-blanco);
   padding: 20px 0;
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100vh;
+}
+
+.saag-sidebar-contenido {
+  display: flex;
+  flex-direction: column;
+}
+
+.saag-cerrar-sesion {
+  border-top: 1px solid rgba(232, 224, 211, 0.15);
+  color: var(--saag-beige);
+}
+
+.saag-cerrar-sesion:hover {
+  background: rgba(160, 26, 26, 0.25);
+  color: var(--saag-blanco);
 }
 
 .saag-sidebar-brand {
@@ -49,8 +68,10 @@
 .saag-menu-item {
   width: 100%;
   text-align: left;
+  text-decoration: none;
   background: none;
   border: none;
+  border-left: 3px solid transparent;
   color: var(--saag-blanco);
   padding: 14px 20px;
   font-size: 15px;
@@ -58,10 +79,17 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-sizing: border-box;
 }
 
 .saag-menu-item:hover {
   background: rgba(232, 224, 211, 0.1);
+}
+
+.saag-menu-item.activo {
+  border-left: 3px solid var(--saag-beige);
+  background: rgba(232, 224, 211, 0.08);
+  font-weight: bold;
 }
 
 .saag-submenu {

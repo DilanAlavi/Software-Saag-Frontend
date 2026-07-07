@@ -1,8 +1,21 @@
+export type TipoProducto = 'CARPINTERIA' | 'FERRETERIA' | 'PLOMERIA' | 'ELECTRICO';
+
 export interface Producto {
   id: number;
   nombre: string;
-  precio: number;
-  stock: number;
+  nombresAlternativos: string[];
+  marca: string | null;
+  tipoProducto: TipoProducto;
+  codigo: string | null;
+  cantidad: number;
+  precioCosto: number | null;
+  estado: boolean;
+  fechaRegistro: string;
 }
 
-export type NuevoProducto = Omit<Producto, 'id'>;
+export const ETIQUETAS_TIPO_PRODUCTO: Record<TipoProducto, string> = {
+  CARPINTERIA: 'Carpintería',
+  FERRETERIA: 'Ferretería',
+  PLOMERIA: 'Plomería',
+  ELECTRICO: 'Eléctrico',
+};

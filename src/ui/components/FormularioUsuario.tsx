@@ -1,6 +1,7 @@
 import { FormEvent, useState } from 'react';
 import { Sucursal } from '../../domain/sucursal/sucursal.entity';
 import { UsuarioAutenticado } from '../../domain/auth/auth.entity';
+import './modal.css';
 
 interface Props {
   usuarioActual: UsuarioAutenticado | null;
@@ -42,30 +43,44 @@ export function FormularioUsuario({ usuarioActual, sucursales, onCancelar, onCre
   };
 
   return (
-    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
-      <form
-        onSubmit={handleSubmit}
-        style={{ background: '#faf6ef', padding: 24, borderRadius: 8, minWidth: 340, maxWidth: 420, display: 'flex', flexDirection: 'column', gap: 10 }}
-      >
+    <div className="saag-modal-overlay">
+      <form onSubmit={handleSubmit} className="saag-modal-caja">
         <h3 style={{ marginTop: 0 }}>Agregar nuevo usuario</h3>
 
-        <input placeholder="Nombre" value={nombre} onChange={(e) => setNombre(e.target.value)} required style={inputStyle} />
         <input
+          className="saag-input-full"
+          placeholder="Nombre"
+          value={nombre}
+          onChange={(e) => setNombre(e.target.value)}
+          required
+        />
+        <input
+          className="saag-input-full"
           placeholder="Apellido paterno"
           value={apellidoPaterno}
           onChange={(e) => setApellidoPaterno(e.target.value)}
           required
-          style={inputStyle}
         />
         <input
+          className="saag-input-full"
           placeholder="Apellido materno (opcional)"
           value={apellidoMaterno}
           onChange={(e) => setApellidoMaterno(e.target.value)}
-          style={inputStyle}
         />
-        <input placeholder="CI (opcional)" value={ci} onChange={(e) => setCi(e.target.value)} style={inputStyle} />
-        <input placeholder="Celular" value={celular} onChange={(e) => setCelular(e.target.value)} required style={inputStyle} />
-        <select value={genero} onChange={(e) => setGenero(e.target.value)} style={inputStyle}>
+        <input
+          className="saag-input-full"
+          placeholder="CI (opcional)"
+          value={ci}
+          onChange={(e) => setCi(e.target.value)}
+        />
+        <input
+          className="saag-input-full"
+          placeholder="Celular"
+          value={celular}
+          onChange={(e) => setCelular(e.target.value)}
+          required
+        />
+        <select className="saag-input-full" value={genero} onChange={(e) => setGenero(e.target.value)}>
           <option value="">Género (opcional)</option>
           <option value="MASCULINO">Masculino</option>
           <option value="FEMENINO">Femenino</option>
@@ -74,12 +89,12 @@ export function FormularioUsuario({ usuarioActual, sucursales, onCancelar, onCre
 
         {esAdmin && (
           <>
-            <select value={rol} onChange={(e) => setRol(e.target.value)} style={inputStyle}>
+            <select className="saag-input-full" value={rol} onChange={(e) => setRol(e.target.value)}>
               <option value="ADMIN">Admin</option>
               <option value="ADMIN_SUCURSAL">Admin Sucursal</option>
               <option value="VENDEDOR">Vendedor</option>
             </select>
-            <select value={sucursalId} onChange={(e) => setSucursalId(e.target.value)} style={inputStyle}>
+            <select className="saag-input-full" value={sucursalId} onChange={(e) => setSucursalId(e.target.value)}>
               <option value="">Sucursal (opcional)</option>
               {sucursales.map((s) => (
                 <option key={s.id} value={s.id}>
@@ -90,7 +105,7 @@ export function FormularioUsuario({ usuarioActual, sucursales, onCancelar, onCre
           </>
         )}
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 10 }}>
+        <div className="saag-modal-acciones">
           <button type="button" onClick={onCancelar} style={botonSecundario}>
             Cancelar
           </button>
@@ -102,8 +117,6 @@ export function FormularioUsuario({ usuarioActual, sucursales, onCancelar, onCre
     </div>
   );
 }
-
-const inputStyle = { padding: 8, border: '1px solid #cfc3ac', borderRadius: 6 } as const;
 
 const botonPrimario = {
   background: '#1a1a1a',

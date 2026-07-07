@@ -1,23 +1,33 @@
 import { useCallback, useEffect, useState } from 'react';
-import { NuevoProducto, Producto } from '../../domain/producto/producto.entity';
+import { Producto } from '../../domain/producto/producto.entity';
 import { productoApiRepository } from '../../infrastructure/api/producto.api';
+import { CrearProductoInput, ProductoFiltros } from './producto.port';
 
-export function useProductos() {
+export function useProductos(filtros: ProductoFiltros) {
   const [productos, setProductos] = useState<Producto[]>([]);
   const [cargando, setCargando] = useState(false);
 
   const cargar = useCallback(async () => {
     setCargando(true);
     try {
-      setProductos(await productoApiRepository.listar());
+      setProductos(await productoApiRepository.listar(filtros));
     } finally {
       setCargando(false);
     }
-  }, []);
+  }, [filtros.search, filtros.tipoProducto]);
 
   const crear = useCallback(
-    async (data: NuevoProducto) => {
-      await productoApiRepository.crear(data);
+    async (dto: CrearProductoInput) => {
+      const creado = await productoApiRepository.crear(dto);
+      await cargar();
+      return creado;
+    },
+    [cargar],
+  );
+
+  const eliminar = useCallback(
+    async (id: number) => {
+      await productoApiRepository.eliminar(id);
       await cargar();
     },
     [cargar],
@@ -27,5 +37,5 @@ export function useProductos() {
     cargar();
   }, [cargar]);
 
-  return { productos, cargando, cargar, crear };
+  return { productos, cargando, crear, eliminar };
 }
