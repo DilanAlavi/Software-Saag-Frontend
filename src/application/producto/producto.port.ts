@@ -11,12 +11,27 @@ export interface CrearProductoInput {
   marca?: string;
   tipoProducto: string;
   codigo?: string;
-  cantidad?: number;
-  precioCosto?: number;
+}
+
+export interface ActualizarProductoInput {
+  nombre?: string;
+  nombresAlternativos?: string[];
+  marca?: string;
+  tipoProducto?: string;
+  codigo?: string;
+}
+
+export interface ResultadoImportacion {
+  creados: number;
+  errores: { fila: number; mensaje: string }[];
 }
 
 export interface ProductoRepositoryPort {
   listar(filtros: ProductoFiltros): Promise<Producto[]>;
   crear(dto: CrearProductoInput): Promise<Producto>;
+  actualizar(id: number, dto: ActualizarProductoInput): Promise<Producto>;
   eliminar(id: number): Promise<Producto>;
+  marcas(): Promise<string[]>;
+  descargarPlantilla(): Promise<Blob>;
+  importar(archivo: File): Promise<ResultadoImportacion>;
 }

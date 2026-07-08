@@ -3,10 +3,11 @@ import { Producto, ETIQUETAS_TIPO_PRODUCTO } from '../../domain/producto/product
 interface Props {
   productos: Producto[];
   puedeGestionar: boolean;
+  onSolicitarEditar: (producto: Producto) => void;
   onSolicitarEliminar: (id: number, nombre: string) => void;
 }
 
-export function TablaProductos({ productos, puedeGestionar, onSolicitarEliminar }: Props) {
+export function TablaProductos({ productos, puedeGestionar, onSolicitarEditar, onSolicitarEliminar }: Props) {
   return (
     <div style={{ overflowX: 'auto' }}>
       <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff' }}>
@@ -16,8 +17,6 @@ export function TablaProductos({ productos, puedeGestionar, onSolicitarEliminar 
             <th style={th}>Marca</th>
             <th style={th}>Tipo</th>
             <th style={th}>Código</th>
-            <th style={th}>Cantidad</th>
-            <th style={th}>Costo</th>
             {puedeGestionar && <th style={th}>Acciones</th>}
           </tr>
         </thead>
@@ -28,10 +27,14 @@ export function TablaProductos({ productos, puedeGestionar, onSolicitarEliminar 
               <td style={td}>{p.marca ?? '—'}</td>
               <td style={td}>{ETIQUETAS_TIPO_PRODUCTO[p.tipoProducto] ?? p.tipoProducto}</td>
               <td style={td}>{p.codigo ?? '—'}</td>
-              <td style={td}>{p.cantidad}</td>
-              <td style={td}>{p.precioCosto !== null ? p.precioCosto.toFixed(2) : '—'}</td>
               {puedeGestionar && (
-                <td style={td}>
+                <td style={{ ...td, display: 'flex', gap: 8 }}>
+                  <button
+                    onClick={() => onSolicitarEditar(p)}
+                    style={{ background: '#1a1a1a', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: 6, cursor: 'pointer' }}
+                  >
+                    Editar
+                  </button>
                   <button
                     onClick={() => onSolicitarEliminar(p.id, p.nombre)}
                     style={{

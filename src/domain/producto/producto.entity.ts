@@ -7,8 +7,6 @@ export interface Producto {
   marca: string | null;
   tipoProducto: TipoProducto;
   codigo: string | null;
-  cantidad: number;
-  precioCosto: number | null;
   estado: boolean;
   fechaRegistro: string;
 }

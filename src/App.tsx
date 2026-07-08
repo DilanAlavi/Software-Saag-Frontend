@@ -6,6 +6,7 @@ import { ClientesPage } from './ui/pages/ClientesPage';
 import { ProductosPage } from './ui/pages/ProductosPage';
 import { PreciosPage } from './ui/pages/PreciosPage';
 import { MarcasPage } from './ui/pages/MarcasPage';
+import { StockPage } from './ui/pages/StockPage';
 import { RutaPrivada } from './ui/RutaPrivada';
 import { RutaAdmin } from './ui/RutaAdmin';
 import { AppLayout } from './ui/layout/AppLayout';
@@ -19,6 +20,7 @@ export default function App() {
           <Route element={<AppLayout />}>
             <Route path="/inicio" element={<InicioPage />} />
             <Route path="/panel/productos" element={<ProductosPage />} />
+            <Route path="/panel/stock" element={<StockPage />} />
             <Route element={<RutaAdmin />}>
               <Route path="/panel/usuarios" element={<UsuariosPage />} />
               <Route path="/panel/clientes" element={<ClientesPage />} />

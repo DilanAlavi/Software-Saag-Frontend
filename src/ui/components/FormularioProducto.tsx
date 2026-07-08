@@ -1,26 +1,29 @@
 import { FormEvent, useState } from 'react';
+import { Producto } from '../../domain/producto/producto.entity';
 import './modal.css';
 
 interface Props {
+  productoInicial?: Producto;
   onCancelar: () => void;
-  onCrear: (dto: any) => Promise<void>;
+  onGuardar: (dto: any) => Promise<void>;
 }
 
-export function FormularioProducto({ onCancelar, onCrear }: Props) {
-  const [nombre, setNombre] = useState('');
-  const [nombresAlternativos, setNombresAlternativos] = useState('');
-  const [marca, setMarca] = useState('');
-  const [tipoProducto, setTipoProducto] = useState('FERRETERIA');
-  const [codigo, setCodigo] = useState('');
-  const [cantidad, setCantidad] = useState('0');
-  const [precioCosto, setPrecioCosto] = useState('');
+export function FormularioProducto({ productoInicial, onCancelar, onGuardar }: Props) {
+  const esEdicion = Boolean(productoInicial);
+  const [nombre, setNombre] = useState(productoInicial?.nombre ?? '');
+  const [nombresAlternativos, setNombresAlternativos] = useState(
+    productoInicial?.nombresAlternativos.join(', ') ?? '',
+  );
+  const [marca, setMarca] = useState(productoInicial?.marca ?? '');
+  const [tipoProducto, setTipoProducto] = useState<string>(productoInicial?.tipoProducto ?? 'FERRETERIA');
+  const [codigo, setCodigo] = useState(productoInicial?.codigo ?? '');
   const [enviando, setEnviando] = useState(false);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setEnviando(true);
     try {
-      await onCrear({
+      await onGuardar({
         nombre,
         nombresAlternativos: nombresAlternativos
           ? nombresAlternativos.split(',').map((n) => n.trim()).filter(Boolean)
@@ -28,8 +31,6 @@ export function FormularioProducto({ onCancelar, onCrear }: Props) {
         marca: marca || undefined,
         tipoProducto,
         codigo: codigo || undefined,
-        cantidad: cantidad ? Number(cantidad) : undefined,
-        precioCosto: precioCosto ? Number(precioCosto) : undefined,
       });
     } finally {
       setEnviando(false);
@@ -39,7 +40,7 @@ export function FormularioProducto({ onCancelar, onCrear }: Props) {
   return (
     <div className="saag-modal-overlay">
       <form onSubmit={handleSubmit} className="saag-modal-caja">
-        <h3 style={{ marginTop: 0 }}>Agregar nuevo producto</h3>
+        <h3 style={{ marginTop: 0 }}>{esEdicion ? 'Editar producto' : 'Agregar nuevo producto'}</h3>
 
         <input className="saag-input-full" placeholder="Nombre" value={nombre} onChange={(e) => setNombre(e.target.value)} required />
         <input
@@ -57,23 +58,9 @@ export function FormularioProducto({ onCancelar, onCrear }: Props) {
         </select>
         <input
           className="saag-input-full"
-          placeholder="Código de barras (opcional)"
+          placeholder="Código del producto (opcional)"
           value={codigo}
           onChange={(e) => setCodigo(e.target.value)}
-        />
-        <input
-          className="saag-input-full"
-          placeholder="Cantidad"
-          type="number"
-          value={cantidad}
-          onChange={(e) => setCantidad(e.target.value)}
-        />
-        <input
-          className="saag-input-full"
-          placeholder="Precio de costo (opcional)"
-          type="number"
-          value={precioCosto}
-          onChange={(e) => setPrecioCosto(e.target.value)}
         />
 
         <div className="saag-modal-acciones">
@@ -81,7 +68,7 @@ export function FormularioProducto({ onCancelar, onCrear }: Props) {
             Cancelar
           </button>
           <button type="submit" disabled={enviando} style={botonPrimario}>
-            {enviando ? 'Creando...' : 'Aceptar'}
+            {enviando ? 'Guardando...' : esEdicion ? 'Guardar cambios' : 'Aceptar'}
           </button>
         </div>
       </form>

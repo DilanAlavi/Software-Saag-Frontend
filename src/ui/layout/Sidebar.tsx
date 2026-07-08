@@ -8,11 +8,16 @@ interface Props {
   abierto: boolean;
 }
 
+type Grupo = 'catalogo' | 'inventario' | 'panel' | null;
+
 export function Sidebar({ usuario, abierto }: Props) {
-  const [catalogoAbierto, setCatalogoAbierto] = useState(true);
-  const [panelAbierto, setPanelAbierto] = useState(true);
+  const [grupoAbierto, setGrupoAbierto] = useState<Grupo>('catalogo');
   const tieneAccesoPanel = usuario?.rol === 'ADMIN' || usuario?.rol === 'ADMIN_SUCURSAL';
   const navigate = useNavigate();
+
+  const alternar = (grupo: Grupo) => {
+    setGrupoAbierto((actual) => (actual === grupo ? null : grupo));
+  };
 
   const handleCerrarSesion = () => {
     cerrarSesion();
@@ -24,11 +29,11 @@ export function Sidebar({ usuario, abierto }: Props) {
       <div className="saag-sidebar-contenido">
         <div className="saag-sidebar-brand">SAAG Software</div>
 
-        <button className="saag-menu-item" onClick={() => setCatalogoAbierto((v) => !v)}>
+        <button className="saag-menu-item" onClick={() => alternar('catalogo')}>
           Catálogo
-          <span>{catalogoAbierto ? '▾' : '▸'}</span>
+          <span>{grupoAbierto === 'catalogo' ? '▾' : '▸'}</span>
         </button>
-        {catalogoAbierto && (
+        {grupoAbierto === 'catalogo' && (
           <nav className="saag-submenu">
             <NavLink to="/panel/productos" className={({ isActive }) => (isActive ? 'activo' : '')}>
               Productos
@@ -46,13 +51,25 @@ export function Sidebar({ usuario, abierto }: Props) {
           </nav>
         )}
 
+        <button className="saag-menu-item" onClick={() => alternar('inventario')}>
+          Inventario
+          <span>{grupoAbierto === 'inventario' ? '▾' : '▸'}</span>
+        </button>
+        {grupoAbierto === 'inventario' && (
+          <nav className="saag-submenu">
+            <NavLink to="/panel/stock" className={({ isActive }) => (isActive ? 'activo' : '')}>
+              Stock
+            </NavLink>
+          </nav>
+        )}
+
         {tieneAccesoPanel && (
           <>
-            <button className="saag-menu-item" onClick={() => setPanelAbierto((v) => !v)}>
+            <button className="saag-menu-item" onClick={() => alternar('panel')}>
               Panel
-              <span>{panelAbierto ? '▾' : '▸'}</span>
+              <span>{grupoAbierto === 'panel' ? '▾' : '▸'}</span>
             </button>
-            {panelAbierto && (
+            {grupoAbierto === 'panel' && (
               <nav className="saag-submenu">
                 <NavLink to="/panel/usuarios" className={({ isActive }) => (isActive ? 'activo' : '')}>
                   Usuarios

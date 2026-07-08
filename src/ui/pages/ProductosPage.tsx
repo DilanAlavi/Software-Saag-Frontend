@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useProductos } from '../../application/producto/useProductos';
 import { obtenerUsuarioActual } from '../../application/auth/useAuth';
-import { ETIQUETAS_TIPO_PRODUCTO } from '../../domain/producto/producto.entity';
+import { ETIQUETAS_TIPO_PRODUCTO, Producto } from '../../domain/producto/producto.entity';
 import { TablaProductos } from '../components/TablaProductos';
 import { ModalConfirmacion } from '../components/ModalConfirmacion';
 import { FormularioProducto } from '../components/FormularioProducto';
@@ -16,9 +16,10 @@ export function ProductosPage() {
     () => ({ search: search || undefined, tipoProducto: tipoProducto || undefined }),
     [search, tipoProducto],
   );
-  const { productos, cargando, crear, eliminar } = useProductos(filtros);
+  const { productos, cargando, crear, actualizar, eliminar } = useProductos(filtros);
 
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
+  const [productoEditando, setProductoEditando] = useState<Producto | null>(null);
   const [confirmacion, setConfirmacion] = useState<{ id: number; nombre: string } | null>(null);
 
   return (
@@ -60,6 +61,7 @@ export function ProductosPage() {
         <TablaProductos
           productos={productos}
           puedeGestionar={puedeGestionar}
+          onSolicitarEditar={(producto) => setProductoEditando(producto)}
           onSolicitarEliminar={(id, nombre) => setConfirmacion({ id, nombre })}
         />
       )}
@@ -79,9 +81,20 @@ export function ProductosPage() {
       {mostrarFormulario && (
         <FormularioProducto
           onCancelar={() => setMostrarFormulario(false)}
-          onCrear={async (dto) => {
+          onGuardar={async (dto) => {
             await crear(dto);
             setMostrarFormulario(false);
+          }}
+        />
+      )}
+
+      {productoEditando && (
+        <FormularioProducto
+          productoInicial={productoEditando}
+          onCancelar={() => setProductoEditando(null)}
+          onGuardar={async (dto) => {
+            await actualizar(productoEditando.id, dto);
+            setProductoEditando(null);
           }}
         />
       )}
