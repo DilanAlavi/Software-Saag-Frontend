@@ -11,6 +11,9 @@ export interface CrearProductoInput {
   marca?: string;
   tipoProducto: string;
   codigo?: string;
+  unidadesPorPaquete?: number;
+  unidadesPorCaja?: number;
+  ventaSoloPorPaquete?: boolean;
 }
 
 export interface ActualizarProductoInput {
@@ -19,6 +22,9 @@ export interface ActualizarProductoInput {
   marca?: string;
   tipoProducto?: string;
   codigo?: string;
+  unidadesPorPaquete?: number;
+  unidadesPorCaja?: number;
+  ventaSoloPorPaquete?: boolean;
 }
 
 export interface ResultadoImportacion {

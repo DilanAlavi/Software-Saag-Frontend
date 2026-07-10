@@ -24,13 +24,10 @@ export function ProductosPage() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
-        <h1 style={{ margin: 0 }}>Productos</h1>
+      <div className="page-header">
+        <h1>Productos</h1>
         {puedeGestionar && (
-          <button
-            onClick={() => setMostrarFormulario(true)}
-            style={{ background: '#1a1a1a', color: '#faf6ef', border: 'none', padding: '10px 16px', borderRadius: 6, cursor: 'pointer' }}
-          >
+          <button className="btn btn-primary" onClick={() => setMostrarFormulario(true)}>
             Agregar nuevo producto
           </button>
         )}
@@ -38,12 +35,13 @@ export function ProductosPage() {
 
       <div style={{ display: 'flex', gap: 10, marginBottom: 20, flexWrap: 'wrap' }}>
         <input
+          className="input"
           placeholder="Buscar producto..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          style={{ flex: 1, minWidth: 200, padding: 8 }}
+          style={{ flex: 1, minWidth: 200 }}
         />
-        <select value={tipoProducto} onChange={(e) => setTipoProducto(e.target.value)} style={{ padding: 8 }}>
+        <select className="input" value={tipoProducto} onChange={(e) => setTipoProducto(e.target.value)} style={{ maxWidth: 220 }}>
           <option value="">Todos los tipos</option>
           {Object.entries(ETIQUETAS_TIPO_PRODUCTO).map(([valor, etiqueta]) => (
             <option key={valor} value={valor}>

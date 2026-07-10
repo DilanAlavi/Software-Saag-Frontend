@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { StockConDetalle } from '../../domain/stock/stock.entity';
 import { stockApiRepository } from '../../infrastructure/api/stock.api';
-import { GuardarStockInput } from './stock.port';
+import { ConfirmarStockInput, GuardarStockInput } from './stock.port';
 
 export function useStock() {
   const [filas, setFilas] = useState<StockConDetalle[]>([]);
@@ -24,9 +24,17 @@ export function useStock() {
     [cargar],
   );
 
+  const confirmar = useCallback(
+    async (dto: ConfirmarStockInput) => {
+      await stockApiRepository.confirmar(dto);
+      await cargar();
+    },
+    [cargar],
+  );
+
   useEffect(() => {
     cargar();
   }, [cargar]);
 
-  return { filas, cargando, guardar };
+  return { filas, cargando, guardar, confirmar };
 }

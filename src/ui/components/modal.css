@@ -1,7 +1,7 @@
 .saag-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(20, 26, 41, 0.55);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -11,26 +11,43 @@
 }
 
 .saag-modal-caja {
-  background: #faf6ef;
-  padding: 24px;
-  border-radius: 8px;
+  background: var(--color-surface);
+  padding: 26px;
+  border-radius: var(--radius-lg);
   width: 100%;
-  max-width: 420px;
+  max-width: 440px;
   max-height: 90vh;
   overflow-y: auto;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
+  box-shadow: var(--shadow-md);
+}
+
+.saag-modal-caja.ancho {
+  max-width: 720px;
+}
+
+.saag-modal-caja h3 {
+  margin: 0;
+  color: var(--color-primary);
+  font-size: 19px;
 }
 
 .saag-input-full {
   width: 100%;
   box-sizing: border-box;
-  padding: 8px;
-  border: 1px solid #cfc3ac;
-  border-radius: 6px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
   font-size: 14px;
+}
+
+.saag-input-full:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
 }
 
 .saag-modal-acciones {
@@ -47,7 +64,7 @@
   }
 
   .saag-modal-caja {
-    padding: 16px;
+    padding: 18px;
   }
 
   .saag-modal-acciones {

@@ -50,24 +50,22 @@ export function UsuariosPage() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
-        <h1 style={{ margin: 0 }}>Usuarios</h1>
-        <button
-          onClick={() => setMostrarFormulario(true)}
-          style={{ background: '#1a1a1a', color: '#faf6ef', border: 'none', padding: '10px 16px', borderRadius: 6, cursor: 'pointer' }}
-        >
+      <div className="page-header">
+        <h1>Usuarios</h1>
+        <button className="btn btn-primary" onClick={() => setMostrarFormulario(true)}>
           Agregar nuevo usuario
         </button>
       </div>
 
       <div style={{ display: 'flex', gap: 10, marginBottom: 20, flexWrap: 'wrap' }}>
         <input
+          className="input"
           placeholder="Buscar usuario..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          style={{ flex: 1, minWidth: 200, padding: 8 }}
+          style={{ flex: 1, minWidth: 200 }}
         />
-        <select value={sucursalId} onChange={(e) => setSucursalId(e.target.value)} style={{ padding: 8 }}>
+        <select className="input" value={sucursalId} onChange={(e) => setSucursalId(e.target.value)} style={{ maxWidth: 220 }}>
           <option value="">Todas las sucursales</option>
           {sucursales.map((s) => (
             <option key={s.id} value={s.id}>

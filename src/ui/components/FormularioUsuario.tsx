@@ -106,10 +106,10 @@ export function FormularioUsuario({ usuarioActual, sucursales, onCancelar, onCre
         )}
 
         <div className="saag-modal-acciones">
-          <button type="button" onClick={onCancelar} style={botonSecundario}>
+          <button type="button" onClick={onCancelar} className="btn btn-secondary">
             Cancelar
           </button>
-          <button type="submit" disabled={enviando} style={botonPrimario}>
+          <button type="submit" disabled={enviando} className="btn btn-primary">
             {enviando ? 'Creando...' : 'Aceptar'}
           </button>
         </div>
@@ -117,21 +117,3 @@ export function FormularioUsuario({ usuarioActual, sucursales, onCancelar, onCre
     </div>
   );
 }
-
-const botonPrimario = {
-  background: '#1a1a1a',
-  color: '#faf6ef',
-  border: 'none',
-  padding: '8px 16px',
-  borderRadius: 6,
-  cursor: 'pointer',
-} as const;
-
-const botonSecundario = {
-  background: 'transparent',
-  color: '#1a1a1a',
-  border: '1px solid #1a1a1a',
-  padding: '8px 16px',
-  borderRadius: 6,
-  cursor: 'pointer',
-} as const;

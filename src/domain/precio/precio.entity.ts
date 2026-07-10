@@ -10,6 +10,7 @@ export interface Precio {
   carpinteria: number;
   electricista: number;
   precioCaja: number | null;
+  precioPiezaSuelta: number | null;
   cantidadMinimaDescuentoMenor1: number | null;
   precioDescuentoMenor1: number | null;
 }

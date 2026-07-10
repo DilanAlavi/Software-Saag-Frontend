@@ -14,39 +14,32 @@ interface Props {
 
 export function TablaGestion({ filas, onSolicitarCambioEstado }: Props) {
   return (
-    <div style={{ overflowX: 'auto' }}>
-      <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff' }}>
+    <div className="table-wrap">
+      <table className="data-table">
         <thead>
-          <tr style={{ background: '#1a1a1a', color: '#faf6ef', textAlign: 'left' }}>
-            <th style={th}>Nombre</th>
-            <th style={th}>Categoría</th>
-            <th style={th}>Sucursal</th>
-            <th style={th}>Registrado</th>
-            <th style={th}>Estado</th>
-            <th style={th}>Acciones</th>
+          <tr>
+            <th>Nombre</th>
+            <th>Categoría</th>
+            <th>Sucursal</th>
+            <th>Registrado</th>
+            <th>Estado</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
           {filas.map((f) => (
-            <tr key={f.id} style={{ borderBottom: '1px solid #e8e0d3' }}>
-              <td style={{ ...td, fontWeight: 700 }}>{f.nombreCompleto}</td>
-              <td style={td}>{f.categoriaEtiqueta}</td>
-              <td style={td}>{f.sucursalEtiqueta}</td>
-              <td style={td}>{f.fechaRegistro ? new Date(f.fechaRegistro).toLocaleString() : '—'}</td>
-              <td style={{ ...td, color: f.estado ? '#1a7a1a' : '#a01a1a', fontWeight: 600 }}>
-                {f.estado ? 'Activo' : 'Inactivo'}
+            <tr key={f.id}>
+              <td style={{ fontWeight: 700 }}>{f.nombreCompleto}</td>
+              <td>{f.categoriaEtiqueta}</td>
+              <td>{f.sucursalEtiqueta}</td>
+              <td>{f.fechaRegistro ? new Date(f.fechaRegistro).toLocaleString() : '—'}</td>
+              <td>
+                <span className={f.estado ? 'badge badge-success' : 'badge badge-danger'}>{f.estado ? 'Activo' : 'Inactivo'}</span>
               </td>
-              <td style={td}>
+              <td>
                 <button
+                  className={f.estado ? 'btn btn-danger btn-sm' : 'btn btn-accent btn-sm'}
                   onClick={() => onSolicitarCambioEstado(f.id, f.nombreCompleto, f.estado)}
-                  style={{
-                    background: f.estado ? '#a01a1a' : '#1a7a1a',
-                    color: '#fff',
-                    border: 'none',
-                    padding: '6px 12px',
-                    borderRadius: 6,
-                    cursor: 'pointer',
-                  }}
                 >
                   {f.estado ? 'Desactivar' : 'Activar'}
                 </button>
@@ -58,6 +51,3 @@ export function TablaGestion({ filas, onSolicitarCambioEstado }: Props) {
     </div>
   );
 }
-
-const th = { padding: '10px 14px', fontSize: 13, textTransform: 'uppercase' as const, letterSpacing: 0.5 };
-const td = { padding: '10px 14px', fontSize: 14, color: '#1a1a1a' };

@@ -35,7 +35,7 @@ export function ModalCredenciales({ visible, nombreCompleto, username, password,
       <div className="saag-modal-caja">
         <h3 style={{ margin: 0 }}>Usuario creado correctamente</h3>
         <p style={{ margin: 0 }}>{nombreCompleto}</p>
-        <div style={{ background: '#fff', border: '1px solid #e8e0d3', borderRadius: 6, padding: 12, wordBreak: 'break-word' }}>
+        <div style={{ background: 'var(--color-surface-alt)', border: '1px solid var(--color-border)', borderRadius: 8, padding: 12, wordBreak: 'break-word' }}>
           <p style={{ margin: '4px 0' }}>
             <strong>Usuario:</strong> {username}
           </p>
@@ -43,17 +43,17 @@ export function ModalCredenciales({ visible, nombreCompleto, username, password,
             <strong>Contraseña:</strong> {password}
           </p>
         </div>
-        <p style={{ fontSize: 13, color: '#a01a1a', margin: 0 }}>
+        <p style={{ fontSize: 13, color: 'var(--color-danger)', margin: 0 }}>
           Guarda esta información ahora — no se volverá a mostrar.
         </p>
         <div className="saag-modal-acciones">
-          <button onClick={copiar} style={botonSecundario}>
+          <button onClick={copiar} className="btn btn-secondary">
             {copiado ? 'Copiado ✓' : 'Copiar'}
           </button>
-          <button onClick={descargar} style={botonSecundario}>
+          <button onClick={descargar} className="btn btn-secondary">
             Descargar Excel
           </button>
-          <button onClick={onCerrar} style={botonPrimario}>
+          <button onClick={onCerrar} className="btn btn-primary">
             Cerrar
           </button>
         </div>
@@ -61,21 +61,3 @@ export function ModalCredenciales({ visible, nombreCompleto, username, password,
     </div>
   );
 }
-
-const botonPrimario = {
-  background: '#1a1a1a',
-  color: '#faf6ef',
-  border: 'none',
-  padding: '8px 16px',
-  borderRadius: 6,
-  cursor: 'pointer',
-} as const;
-
-const botonSecundario = {
-  background: 'transparent',
-  color: '#1a1a1a',
-  border: '1px solid #1a1a1a',
-  padding: '8px 16px',
-  borderRadius: 6,
-  cursor: 'pointer',
-} as const;

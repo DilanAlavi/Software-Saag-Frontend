@@ -5,9 +5,19 @@ import { useSucursales } from '../../application/sucursal/useSucursales';
 import { obtenerUsuarioActual } from '../../application/auth/useAuth';
 import { StockConDetalle } from '../../domain/stock/stock.entity';
 import { FormularioStock } from '../components/FormularioStock';
+import { FormularioConfirmarStock } from '../components/FormularioConfirmarStock';
+
+function formatearDesglose(fila: StockConDetalle): string {
+  if (fila.unidadesTotales === null) return 'Sin contar';
+  const partes: string[] = [];
+  if (fila.cajas !== null) partes.push(`${fila.cajas} caja${fila.cajas === 1 ? '' : 's'}`);
+  if (fila.paquetes !== null) partes.push(`${fila.paquetes} paquete${fila.paquetes === 1 ? '' : 's'}`);
+  if (fila.piezasSueltas !== null) partes.push(`${fila.piezasSueltas} pieza${fila.piezasSueltas === 1 ? '' : 's'}`);
+  return `${partes.join(', ')} (${fila.unidadesTotales} u.)`;
+}
 
 export function StockPage() {
-  const { filas, cargando, guardar } = useStock();
+  const { filas, cargando, guardar, confirmar } = useStock();
   const filtrosProductos = useMemo(() => ({}), []);
   const { productos } = useProductos(filtrosProductos);
   const { sucursales } = useSucursales();
@@ -16,16 +26,14 @@ export function StockPage() {
 
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [editando, setEditando] = useState<StockConDetalle | null>(null);
+  const [confirmando, setConfirmando] = useState<StockConDetalle | null>(null);
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
-        <h1 style={{ margin: 0 }}>Stock</h1>
+      <div className="page-header">
+        <h1>Stock</h1>
         {puedeGestionar && (
-          <button
-            onClick={() => setMostrarFormulario(true)}
-            style={{ background: '#e8e0d3', color: '#1a1a1a', border: '1px solid #cfc3ac', padding: '10px 16px', borderRadius: 6, cursor: 'pointer' }}
-          >
+          <button className="btn btn-primary" onClick={() => setMostrarFormulario(true)}>
             Agregar stock
           </button>
         )}
@@ -36,34 +44,44 @@ export function StockPage() {
       ) : filas.length === 0 ? (
         <p>No hay stock cargado todavía.</p>
       ) : (
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff' }}>
+        <div className="table-wrap">
+          <table className="data-table">
             <thead>
-              <tr style={{ background: '#1a1a1a', color: '#faf6ef', textAlign: 'left' }}>
-                <th style={th}>Producto</th>
-                <th style={th}>Código</th>
-                <th style={th}>Ubicación</th>
-                <th style={th}>Área</th>
-                <th style={th}>Cantidad</th>
-                {puedeGestionar && <th style={th}>Acciones</th>}
+              <tr>
+                <th>Producto</th>
+                <th>Código</th>
+                <th>Ubicación</th>
+                <th>Área</th>
+                <th>Stock</th>
+                <th>Confirmado</th>
+                <th>Vendidas</th>
+                {puedeGestionar && <th>Acciones</th>}
               </tr>
             </thead>
             <tbody>
               {filas.map((fila) => (
-                <tr key={fila.id} style={{ borderBottom: '1px solid #e8e0d3' }}>
-                  <td style={{ ...td, fontWeight: 700 }}>{fila.productoNombre}</td>
-                  <td style={td}>{fila.productoCodigo ?? '—'}</td>
-                  <td style={td}>{fila.sucursalNombre}</td>
-                  <td style={td}>{fila.area ?? '—'}</td>
-                  <td style={td}>{fila.cantidad ?? 'Sin contar'}</td>
+                <tr key={fila.id}>
+                  <td style={{ fontWeight: 700 }}>{fila.productoNombre}</td>
+                  <td>{fila.productoCodigo ?? '—'}</td>
+                  <td>{fila.sucursalNombre}</td>
+                  <td>{fila.area ?? '—'}</td>
+                  <td>{formatearDesglose(fila)}</td>
+                  <td>
+                    <span className={fila.confirmado ? 'badge badge-success' : 'badge badge-neutral'}>
+                      {fila.confirmado ? 'Sí' : 'No'}
+                    </span>
+                  </td>
+                  <td>{fila.cantidadVendidaAcumulada}</td>
                   {puedeGestionar && (
-                    <td style={td}>
-                      <button
-                        onClick={() => setEditando(fila)}
-                        style={{ background: '#1a1a1a', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: 6, cursor: 'pointer' }}
-                      >
-                        Editar
-                      </button>
+                    <td>
+                      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                        <button className="btn btn-primary btn-sm" onClick={() => setEditando(fila)}>
+                          Agregar más
+                        </button>
+                        <button className="btn btn-secondary btn-sm" onClick={() => setConfirmando(fila)}>
+                          Confirmar
+                        </button>
+                      </div>
                     </td>
                   )}
                 </tr>
@@ -97,9 +115,17 @@ export function StockPage() {
           }}
         />
       )}
+
+      {confirmando && (
+        <FormularioConfirmarStock
+          fila={confirmando}
+          onCancelar={() => setConfirmando(null)}
+          onConfirmar={async (cantidad) => {
+            await confirmar({ productoId: confirmando.productoId, sucursalId: confirmando.sucursalId, cantidad });
+            setConfirmando(null);
+          }}
+        />
+      )}
     </div>
   );
 }
-
-const th = { padding: '10px 14px', fontSize: 13, textTransform: 'uppercase' as const, letterSpacing: 0.5 };
-const td = { padding: '10px 14px', fontSize: 14, color: '#1a1a1a' };

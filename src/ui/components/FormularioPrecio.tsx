@@ -30,6 +30,7 @@ export function FormularioPrecio({ nombreProducto, precioInicial, onCancelar, on
     carpinteria: precioInicial?.carpinteria.toString() ?? '',
     electricista: precioInicial?.electricista.toString() ?? '',
     precioCaja: precioInicial?.precioCaja?.toString() ?? '',
+    precioPiezaSuelta: precioInicial?.precioPiezaSuelta?.toString() ?? '',
     cantidadMinimaDescuentoMenor1: precioInicial?.cantidadMinimaDescuentoMenor1?.toString() ?? '',
     precioDescuentoMenor1: precioInicial?.precioDescuentoMenor1?.toString() ?? '',
   });
@@ -46,6 +47,9 @@ export function FormularioPrecio({ nombreProducto, precioInicial, onCancelar, on
     }
     if (dto.precioCaja !== undefined && dto.precioCaja <= dto.precioCosto) {
       return `El precio de Caja debe ser mayor al Precio Base (${dto.precioCosto})`;
+    }
+    if (dto.precioPiezaSuelta !== undefined && dto.precioPiezaSuelta <= dto.precioCosto) {
+      return `El precio de pieza suelta debe ser mayor al Precio Base (${dto.precioCosto})`;
     }
     if (dto.precioDescuentoMenor1 !== undefined) {
       if (dto.cantidadMinimaDescuentoMenor1 === undefined) {
@@ -70,6 +74,7 @@ export function FormularioPrecio({ nombreProducto, precioInicial, onCancelar, on
       carpinteria: Number(valores.carpinteria),
       electricista: Number(valores.electricista),
       precioCaja: valores.precioCaja ? Number(valores.precioCaja) : undefined,
+      precioPiezaSuelta: valores.precioPiezaSuelta ? Number(valores.precioPiezaSuelta) : undefined,
       cantidadMinimaDescuentoMenor1: valores.cantidadMinimaDescuentoMenor1
         ? Number(valores.cantidadMinimaDescuentoMenor1)
         : undefined,
@@ -129,6 +134,15 @@ export function FormularioPrecio({ nombreProducto, precioInicial, onCancelar, on
           onChange={(e) => set('precioCaja', e.target.value)}
         />
 
+        <label style={etiquetaStyle}>Precio de pieza suelta (opcional — para productos con paquete)</label>
+        <input
+          className="saag-input-full"
+          type="number"
+          step="0.01"
+          value={valores.precioPiezaSuelta}
+          onChange={(e) => set('precioPiezaSuelta', e.target.value)}
+        />
+
         <label style={etiquetaStyle}>Descuento Standard 1 — cantidad mínima (opcional)</label>
         <input
           className="saag-input-full"
@@ -146,13 +160,13 @@ export function FormularioPrecio({ nombreProducto, precioInicial, onCancelar, on
           onChange={(e) => set('precioDescuentoMenor1', e.target.value)}
         />
 
-        {error && <p style={{ color: '#a01a1a', fontSize: 13, margin: 0 }}>{error}</p>}
+        {error && <p style={{ color: 'var(--color-danger)', fontSize: 13, margin: 0 }}>{error}</p>}
 
         <div className="saag-modal-acciones">
-          <button type="button" onClick={onCancelar} style={botonSecundario}>
+          <button type="button" onClick={onCancelar} className="btn btn-secondary">
             Cancelar
           </button>
-          <button type="submit" disabled={enviando} style={botonPrimario}>
+          <button type="submit" disabled={enviando} className="btn btn-primary">
             {enviando ? 'Guardando...' : 'Guardar'}
           </button>
         </div>
@@ -161,22 +175,4 @@ export function FormularioPrecio({ nombreProducto, precioInicial, onCancelar, on
   );
 }
 
-const etiquetaStyle = { fontSize: 12, color: '#555', marginBottom: 2, display: 'block' } as const;
-
-const botonPrimario = {
-  background: '#1a1a1a',
-  color: '#faf6ef',
-  border: 'none',
-  padding: '8px 16px',
-  borderRadius: 6,
-  cursor: 'pointer',
-} as const;
-
-const botonSecundario = {
-  background: 'transparent',
-  color: '#1a1a1a',
-  border: '1px solid #1a1a1a',
-  padding: '8px 16px',
-  borderRadius: 6,
-  cursor: 'pointer',
-} as const;
+const etiquetaStyle = { fontSize: 12, color: 'var(--color-text-muted)', marginBottom: 2, display: 'block' } as const;

@@ -15,8 +15,8 @@ export function PreciosPage() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
-        <h1 style={{ margin: 0 }}>Precios</h1>
+      <div className="page-header" style={{ alignItems: 'flex-start' }}>
+        <h1>Precios</h1>
         <ImportarExcelProductos onImportado={recargar} />
       </div>
 
@@ -25,43 +25,42 @@ export function PreciosPage() {
       ) : filas.length === 0 ? (
         <p>No hay productos registrados todavía.</p>
       ) : (
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff' }}>
+        <div className="table-wrap">
+          <table className="data-table">
             <thead>
-              <tr style={{ background: '#1a1a1a', color: '#faf6ef', textAlign: 'left' }}>
-                <th style={th}>Nombre</th>
-                <th style={th}>Tipo</th>
-                <th style={th}>Base</th>
-                <th style={th}>Standard 1</th>
-                <th style={th}>Standard 2</th>
-                <th style={th}>Mayor 1</th>
-                <th style={th}>Mayor 2</th>
-                <th style={th}>Plomería</th>
-                <th style={th}>Carpintería</th>
-                <th style={th}>Electricista</th>
-                <th style={th}>Caja</th>
-                <th style={th}>Acciones</th>
+              <tr>
+                <th>Nombre</th>
+                <th>Tipo</th>
+                <th>Base</th>
+                <th>Standard 1</th>
+                <th>Standard 2</th>
+                <th>Mayor 1</th>
+                <th>Mayor 2</th>
+                <th>Plomería</th>
+                <th>Carpintería</th>
+                <th>Electricista</th>
+                <th>Caja</th>
+                <th>Pieza suelta</th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
               {filas.map((fila) => (
-                <tr key={fila.productoId} style={{ borderBottom: '1px solid #e8e0d3' }}>
-                  <td style={{ ...td, fontWeight: 700 }}>{fila.nombre}</td>
-                  <td style={td}>{ETIQUETAS_TIPO_PRODUCTO[fila.tipoProducto as keyof typeof ETIQUETAS_TIPO_PRODUCTO] ?? fila.tipoProducto}</td>
-                  <td style={td}>{formatear(fila.precio?.precioCosto)}</td>
-                  <td style={td}>{formatear(fila.precio?.menor1)}</td>
-                  <td style={td}>{formatear(fila.precio?.menor2)}</td>
-                  <td style={td}>{formatear(fila.precio?.mayor1)}</td>
-                  <td style={td}>{formatear(fila.precio?.mayor2)}</td>
-                  <td style={td}>{formatear(fila.precio?.plomeria)}</td>
-                  <td style={td}>{formatear(fila.precio?.carpinteria)}</td>
-                  <td style={td}>{formatear(fila.precio?.electricista)}</td>
-                  <td style={td}>{formatear(fila.precio?.precioCaja)}</td>
-                  <td style={td}>
-                    <button
-                      onClick={() => setEditando(fila)}
-                      style={{ background: '#1a1a1a', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: 6, cursor: 'pointer' }}
-                    >
+                <tr key={fila.productoId}>
+                  <td style={{ fontWeight: 700 }}>{fila.nombre}</td>
+                  <td>{ETIQUETAS_TIPO_PRODUCTO[fila.tipoProducto as keyof typeof ETIQUETAS_TIPO_PRODUCTO] ?? fila.tipoProducto}</td>
+                  <td>{formatear(fila.precio?.precioCosto)}</td>
+                  <td>{formatear(fila.precio?.menor1)}</td>
+                  <td>{formatear(fila.precio?.menor2)}</td>
+                  <td>{formatear(fila.precio?.mayor1)}</td>
+                  <td>{formatear(fila.precio?.mayor2)}</td>
+                  <td>{formatear(fila.precio?.plomeria)}</td>
+                  <td>{formatear(fila.precio?.carpinteria)}</td>
+                  <td>{formatear(fila.precio?.electricista)}</td>
+                  <td>{formatear(fila.precio?.precioCaja)}</td>
+                  <td>{formatear(fila.precio?.precioPiezaSuelta)}</td>
+                  <td>
+                    <button className="btn btn-primary btn-sm" onClick={() => setEditando(fila)}>
                       {fila.precio ? 'Editar' : 'Cargar precios'}
                     </button>
                   </td>
@@ -86,6 +85,3 @@ export function PreciosPage() {
     </div>
   );
 }
-
-const th = { padding: '10px 14px', fontSize: 13, textTransform: 'uppercase' as const, letterSpacing: 0.5 };
-const td = { padding: '10px 14px', fontSize: 14, color: '#1a1a1a' };

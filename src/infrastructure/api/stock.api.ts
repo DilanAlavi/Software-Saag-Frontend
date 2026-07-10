@@ -9,4 +9,7 @@ export const stockApiRepository: StockRepositoryPort = {
   async guardar(dto) {
     await httpClient.put('/stock', dto);
   },
+  async confirmar(dto) {
+    await httpClient.put('/stock/confirmar', dto);
+  },
 };

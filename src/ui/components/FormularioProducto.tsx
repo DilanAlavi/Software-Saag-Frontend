@@ -17,6 +17,11 @@ export function FormularioProducto({ productoInicial, onCancelar, onGuardar }: P
   const [marca, setMarca] = useState(productoInicial?.marca ?? '');
   const [tipoProducto, setTipoProducto] = useState<string>(productoInicial?.tipoProducto ?? 'FERRETERIA');
   const [codigo, setCodigo] = useState(productoInicial?.codigo ?? '');
+  const [unidadesPorPaquete, setUnidadesPorPaquete] = useState(
+    productoInicial?.unidadesPorPaquete?.toString() ?? '',
+  );
+  const [unidadesPorCaja, setUnidadesPorCaja] = useState(productoInicial?.unidadesPorCaja?.toString() ?? '');
+  const [ventaSoloPorPaquete, setVentaSoloPorPaquete] = useState(productoInicial?.ventaSoloPorPaquete ?? false);
   const [enviando, setEnviando] = useState(false);
 
   const handleSubmit = async (e: FormEvent) => {
@@ -31,6 +36,9 @@ export function FormularioProducto({ productoInicial, onCancelar, onGuardar }: P
         marca: marca || undefined,
         tipoProducto,
         codigo: codigo || undefined,
+        unidadesPorPaquete: unidadesPorPaquete ? Number(unidadesPorPaquete) : undefined,
+        unidadesPorCaja: unidadesPorCaja ? Number(unidadesPorCaja) : undefined,
+        ventaSoloPorPaquete,
       });
     } finally {
       setEnviando(false);
@@ -63,11 +71,37 @@ export function FormularioProducto({ productoInicial, onCancelar, onGuardar }: P
           onChange={(e) => setCodigo(e.target.value)}
         />
 
+        <hr style={{ border: 'none', borderTop: '1px solid var(--color-border)', margin: '4px 0' }} />
+        <p style={{ margin: 0, fontSize: 13, color: 'var(--color-text-muted)' }}>Empaquetado (opcional)</p>
+
+        <input
+          className="saag-input-full"
+          placeholder="Unidades por paquete (ej. 10)"
+          type="number"
+          value={unidadesPorPaquete}
+          onChange={(e) => setUnidadesPorPaquete(e.target.value)}
+        />
+        <input
+          className="saag-input-full"
+          placeholder="Unidades por caja (ej. 100)"
+          type="number"
+          value={unidadesPorCaja}
+          onChange={(e) => setUnidadesPorCaja(e.target.value)}
+        />
+        <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14 }}>
+          <input
+            type="checkbox"
+            checked={ventaSoloPorPaquete}
+            onChange={(e) => setVentaSoloPorPaquete(e.target.checked)}
+          />
+          Vender solo por paquete completo (no se puede vender suelto)
+        </label>
+
         <div className="saag-modal-acciones">
-          <button type="button" onClick={onCancelar} style={botonSecundario}>
+          <button type="button" onClick={onCancelar} className="btn btn-secondary">
             Cancelar
           </button>
-          <button type="submit" disabled={enviando} style={botonPrimario}>
+          <button type="submit" disabled={enviando} className="btn btn-primary">
             {enviando ? 'Guardando...' : esEdicion ? 'Guardar cambios' : 'Aceptar'}
           </button>
         </div>
@@ -75,21 +109,3 @@ export function FormularioProducto({ productoInicial, onCancelar, onGuardar }: P
     </div>
   );
 }
-
-const botonPrimario = {
-  background: '#1a1a1a',
-  color: '#faf6ef',
-  border: 'none',
-  padding: '8px 16px',
-  borderRadius: 6,
-  cursor: 'pointer',
-} as const;
-
-const botonSecundario = {
-  background: 'transparent',
-  color: '#1a1a1a',
-  border: '1px solid #1a1a1a',
-  padding: '8px 16px',
-  borderRadius: 6,
-  cursor: 'pointer',
-} as const;

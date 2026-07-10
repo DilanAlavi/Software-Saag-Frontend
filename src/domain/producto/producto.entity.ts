@@ -9,6 +9,9 @@ export interface Producto {
   codigo: string | null;
   estado: boolean;
   fechaRegistro: string;
+  unidadesPorPaquete: number | null;
+  unidadesPorCaja: number | null;
+  ventaSoloPorPaquete: boolean;
 }
 
 export const ETIQUETAS_TIPO_PRODUCTO: Record<TipoProducto, string> = {

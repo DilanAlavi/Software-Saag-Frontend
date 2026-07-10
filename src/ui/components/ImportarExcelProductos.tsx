@@ -57,7 +57,7 @@ export function ImportarExcelProductos({ onImportado }: Props) {
 
   return (
     <>
-      <button onClick={() => setMostrarPopup(true)} style={botonPrincipal}>
+      <button onClick={() => setMostrarPopup(true)} className="btn btn-secondary" style={{ gap: 8 }}>
         <IconoExcel size={18} />
         Agregar más productos
       </button>
@@ -69,15 +69,15 @@ export function ImportarExcelProductos({ onImportado }: Props) {
 
             {!resultado ? (
               <>
-                <p style={{ color: '#555', fontSize: 14, margin: 0 }}>
+                <p style={{ color: 'var(--color-text-muted)', fontSize: 14, margin: 0 }}>
                   Descarga la plantilla de ejemplo, llénala con tus productos y precios, y luego súbela aquí.
                 </p>
 
-                <button onClick={descargarPlantilla} style={botonSecundario}>
+                <button onClick={descargarPlantilla} className="btn btn-secondary" style={{ gap: 8, width: '100%' }}>
                   <IconoExcel size={16} /> Descargar plantilla de ejemplo
                 </button>
 
-                <button onClick={() => inputRef.current?.click()} disabled={cargando} style={botonPrimario}>
+                <button onClick={() => inputRef.current?.click()} disabled={cargando} className="btn btn-primary" style={{ gap: 8, width: '100%' }}>
                   <IconoExcel size={16} /> {cargando ? 'Importando...' : 'Importar archivo Excel'}
                 </button>
 
@@ -89,16 +89,16 @@ export function ImportarExcelProductos({ onImportado }: Props) {
                   style={{ display: 'none' }}
                 />
 
-                {error && <p style={{ color: '#a01a1a', fontSize: 13, margin: 0 }}>{error}</p>}
+                {error && <p style={{ color: 'var(--color-danger)', fontSize: 13, margin: 0 }}>{error}</p>}
               </>
             ) : (
               <div style={{ fontSize: 14 }}>
-                <p style={{ margin: '0 0 6px', fontWeight: 700, color: '#1a7a1a' }}>
+                <p style={{ margin: '0 0 6px', fontWeight: 700, color: 'var(--color-success)' }}>
                   {resultado.creados} producto(s) importado(s) correctamente.
                 </p>
                 {resultado.errores.length > 0 && (
                   <>
-                    <p style={{ margin: '6px 0', fontWeight: 700, color: '#a01a1a' }}>
+                    <p style={{ margin: '6px 0', fontWeight: 700, color: 'var(--color-danger)' }}>
                       {resultado.errores.length} fila(s) con error:
                     </p>
                     <ul style={{ margin: 0, paddingLeft: 18 }}>
@@ -114,7 +114,7 @@ export function ImportarExcelProductos({ onImportado }: Props) {
             )}
 
             <div className="saag-modal-acciones">
-              <button type="button" onClick={cerrarPopup} style={botonSecundario}>
+              <button type="button" onClick={cerrarPopup} className="btn btn-secondary">
                 Cerrar
               </button>
             </div>
@@ -124,44 +124,3 @@ export function ImportarExcelProductos({ onImportado }: Props) {
     </>
   );
 }
-
-const botonPrincipal = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: 8,
-  background: '#e8e0d3',
-  color: '#1a1a1a',
-  border: '1px solid #cfc3ac',
-  padding: '10px 16px',
-  borderRadius: 6,
-  cursor: 'pointer',
-  fontSize: 14,
-} as const;
-
-const botonPrimario = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: 8,
-  justifyContent: 'center',
-  background: '#e8e0d3',
-  color: '#1a1a1a',
-  border: '1px solid #cfc3ac',
-  padding: '10px 16px',
-  borderRadius: 6,
-  cursor: 'pointer',
-  width: '100%',
-} as const;
-
-const botonSecundario = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: 8,
-  justifyContent: 'center',
-  background: 'transparent',
-  color: '#1a1a1a',
-  border: '1px solid #1a1a1a',
-  padding: '10px 16px',
-  borderRadius: 6,
-  cursor: 'pointer',
-  width: '100%',
-} as const;

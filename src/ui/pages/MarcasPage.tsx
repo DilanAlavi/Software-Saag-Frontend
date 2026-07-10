@@ -5,24 +5,26 @@ export function MarcasPage() {
 
   return (
     <div>
-      <h1>Marcas</h1>
+      <div className="page-header">
+        <h1>Marcas</h1>
+      </div>
 
       {cargando ? (
         <p>Cargando...</p>
       ) : marcas.length === 0 ? (
         <p>Todavía no hay marcas registradas en ningún producto.</p>
       ) : (
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', maxWidth: 420, borderCollapse: 'collapse', background: '#fff' }}>
+        <div className="table-wrap" style={{ maxWidth: 420 }}>
+          <table className="data-table">
             <thead>
-              <tr style={{ background: '#1a1a1a', color: '#faf6ef', textAlign: 'left' }}>
-                <th style={{ padding: '10px 14px' }}>Marca</th>
+              <tr>
+                <th>Marca</th>
               </tr>
             </thead>
             <tbody>
               {marcas.map((marca) => (
-                <tr key={marca} style={{ borderBottom: '1px solid #e8e0d3' }}>
-                  <td style={{ padding: '10px 14px', fontWeight: 700 }}>{marca}</td>
+                <tr key={marca}>
+                  <td style={{ fontWeight: 700 }}>{marca}</td>
                 </tr>
               ))}
             </tbody>
