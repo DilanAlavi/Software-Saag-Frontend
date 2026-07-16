@@ -6,11 +6,12 @@ import { cerrarSesion } from '../../application/auth/useAuth';
 interface Props {
   usuario: UsuarioAutenticado | null;
   abierto: boolean;
+  onCerrar: () => void;
 }
 
 type Grupo = 'administracion' | 'ventas' | 'productos' | 'inventario' | null;
 
-export function Sidebar({ usuario, abierto }: Props) {
+export function Sidebar({ usuario, abierto, onCerrar }: Props) {
   const [grupoAbierto, setGrupoAbierto] = useState<Grupo>('ventas');
   const tieneAccesoPanel = usuario?.rol === 'ADMIN' || usuario?.rol === 'ADMIN_SUCURSAL';
   const navigate = useNavigate();
@@ -36,7 +37,7 @@ export function Sidebar({ usuario, abierto }: Props) {
               <span>{grupoAbierto === 'administracion' ? '▾' : '▸'}</span>
             </button>
             {grupoAbierto === 'administracion' && (
-              <nav className="saag-submenu">
+              <nav className="saag-submenu" onClick={onCerrar}>
                 <NavLink to="/panel/usuarios" className={({ isActive }) => (isActive ? 'activo' : '')}>
                   Usuarios
                 </NavLink>
@@ -53,7 +54,7 @@ export function Sidebar({ usuario, abierto }: Props) {
           <span>{grupoAbierto === 'ventas' ? '▾' : '▸'}</span>
         </button>
         {grupoAbierto === 'ventas' && (
-          <nav className="saag-submenu">
+          <nav className="saag-submenu" onClick={onCerrar}>
             <NavLink to="/panel/ventas/dia" className={({ isActive }) => (isActive ? 'activo' : '')}>
               Ventas del día
             </NavLink>
@@ -71,7 +72,7 @@ export function Sidebar({ usuario, abierto }: Props) {
           <span>{grupoAbierto === 'productos' ? '▾' : '▸'}</span>
         </button>
         {grupoAbierto === 'productos' && (
-          <nav className="saag-submenu">
+          <nav className="saag-submenu" onClick={onCerrar}>
             <NavLink to="/panel/productos" className={({ isActive }) => (isActive ? 'activo' : '')}>
               Productos
             </NavLink>
@@ -96,7 +97,7 @@ export function Sidebar({ usuario, abierto }: Props) {
           <span>{grupoAbierto === 'inventario' ? '▾' : '▸'}</span>
         </button>
         {grupoAbierto === 'inventario' && (
-          <nav className="saag-submenu">
+          <nav className="saag-submenu" onClick={onCerrar}>
             <NavLink to="/panel/stock" className={({ isActive }) => (isActive ? 'activo' : '')}>
               Stock
             </NavLink>

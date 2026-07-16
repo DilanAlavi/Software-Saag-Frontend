@@ -16,7 +16,7 @@ export function AppLayout() {
           ☰
         </button>
       </div>
-      <Sidebar usuario={usuario} abierto={abierto} />
+      <Sidebar usuario={usuario} abierto={abierto} onCerrar={() => setAbierto(false)} />
       <main className="saag-contenido">
         <Outlet />
       </main>
