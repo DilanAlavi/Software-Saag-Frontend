@@ -24,6 +24,7 @@ export interface VentaFiltros {
   sucursalId?: number;
   fecha?: string;
   search?: string;
+  searchTipo?: 'cliente' | 'vendedor';
   page?: number;
   pageSize?: number;
 }

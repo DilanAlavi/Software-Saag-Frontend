@@ -225,6 +225,18 @@ table.data-table tbody tr:hover {
   background: var(--color-surface-alt);
 }
 
+.table-wrap-scroll {
+  max-height: 480px;
+  overflow-y: auto;
+}
+
+.table-wrap-scroll thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--color-primary-soft);
+}
+
 /* ---------- Badges de estado ---------- */
 
 .badge {
@@ -270,4 +282,41 @@ table.data-table tbody tr:hover {
   .grid-2 {
     grid-template-columns: 1fr;
   }
+}
+
+/* ---------- Tarjetas de resumen (KPIs) ---------- */
+
+.saag-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.saag-stat-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 16px 18px;
+}
+
+.saag-stat-card .saag-stat-label {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+}
+
+.saag-stat-card .saag-stat-valor {
+  margin: 6px 0 0;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.saag-stat-card.destacada .saag-stat-valor {
+  color: var(--color-success);
 }

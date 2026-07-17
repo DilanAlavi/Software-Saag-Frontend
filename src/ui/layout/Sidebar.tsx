@@ -9,7 +9,7 @@ interface Props {
   onCerrar: () => void;
 }
 
-type Grupo = 'administracion' | 'ventas' | 'productos' | 'inventario' | null;
+type Grupo = 'administracion' | 'ventas' | 'ganancias' | 'productos' | 'inventario' | null;
 
 export function Sidebar({ usuario, abierto, onCerrar }: Props) {
   const [grupoAbierto, setGrupoAbierto] = useState<Grupo>('ventas');
@@ -68,6 +68,25 @@ export function Sidebar({ usuario, abierto, onCerrar }: Props) {
               Cuentas por cobrar
             </NavLink>
           </nav>
+        )}
+
+        {tieneAccesoPanel && (
+          <>
+            <button className="saag-menu-item" onClick={() => alternar('ganancias')}>
+              Ganancias
+              <span>{grupoAbierto === 'ganancias' ? '▾' : '▸'}</span>
+            </button>
+            {grupoAbierto === 'ganancias' && (
+              <nav className="saag-submenu" onClick={onCerrar}>
+                <NavLink to="/panel/ganancias/dia" className={({ isActive }) => (isActive ? 'activo' : '')}>
+                  Ganancias del día
+                </NavLink>
+                <NavLink to="/panel/ganancias" end className={({ isActive }) => (isActive ? 'activo' : '')}>
+                  Historial de Ganancias
+                </NavLink>
+              </nav>
+            )}
+          </>
         )}
 
         <button className="saag-menu-item" onClick={() => alternar('productos')}>
