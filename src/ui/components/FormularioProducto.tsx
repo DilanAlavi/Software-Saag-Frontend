@@ -26,6 +26,10 @@ export function FormularioProducto({ productoInicial, onCancelar, onGuardar }: P
   const [unidadVentaTamano, setUnidadVentaTamano] = useState(
     productoInicial?.unidadVentaTamano?.toString() ?? '',
   );
+  const [redondeoSiempreArriba, setRedondeoSiempreArriba] = useState(
+    productoInicial?.redondeoSiempreArriba ?? false,
+  );
+  const [notaVenta, setNotaVenta] = useState(productoInicial?.notaVenta ?? '');
   const [enviando, setEnviando] = useState(false);
 
   const handleSubmit = async (e: FormEvent) => {
@@ -45,6 +49,8 @@ export function FormularioProducto({ productoInicial, onCancelar, onGuardar }: P
         ventaSoloPorPaquete,
         unidadVenta: unidadVenta || undefined,
         unidadVentaTamano: unidadVentaTamano ? Number(unidadVentaTamano) : undefined,
+        redondeoSiempreArriba,
+        notaVenta: notaVenta || undefined,
       });
     } finally {
       setEnviando(false);
@@ -116,6 +122,20 @@ export function FormularioProducto({ productoInicial, onCancelar, onGuardar }: P
             onChange={(e) => setUnidadVentaTamano(e.target.value)}
           />
         )}
+        <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14 }}>
+          <input
+            type="checkbox"
+            checked={redondeoSiempreArriba}
+            onChange={(e) => setRedondeoSiempreArriba(e.target.checked)}
+          />
+          Redondear siempre hacia arriba (sin dejar centavos)
+        </label>
+        <input
+          className="saag-input-full"
+          placeholder='Aviso para el vendedor (ej. "Se vende de 3 en 3")'
+          value={notaVenta}
+          onChange={(e) => setNotaVenta(e.target.value)}
+        />
 
         <div className="saag-modal-acciones">
           <button type="button" onClick={onCancelar} className="btn btn-secondary">

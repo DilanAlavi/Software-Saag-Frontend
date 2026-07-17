@@ -16,6 +16,8 @@ export interface CrearProductoInput {
   ventaSoloPorPaquete?: boolean;
   unidadVenta?: string;
   unidadVentaTamano?: number;
+  redondeoSiempreArriba?: boolean;
+  notaVenta?: string;
 }
 
 export interface ActualizarProductoInput {
@@ -29,6 +31,8 @@ export interface ActualizarProductoInput {
   ventaSoloPorPaquete?: boolean;
   unidadVenta?: string;
   unidadVentaTamano?: number;
+  redondeoSiempreArriba?: boolean;
+  notaVenta?: string;
 }
 
 export interface ResultadoImportacion {

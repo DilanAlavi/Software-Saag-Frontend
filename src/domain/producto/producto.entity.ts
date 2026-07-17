@@ -14,6 +14,8 @@ export interface Producto {
   ventaSoloPorPaquete: boolean;
   unidadVenta: string | null;
   unidadVentaTamano: number | null;
+  redondeoSiempreArriba: boolean;
+  notaVenta: string | null;
 }
 
 export const ETIQUETAS_TIPO_PRODUCTO: Record<TipoProducto, string> = {

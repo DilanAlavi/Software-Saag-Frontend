@@ -476,6 +476,9 @@ export function NuevaVentaPage() {
                               : `se vende por paquete de ${p.unidadesPorPaquete} pcs`)}
                         </div>
                       )}
+                      {p.notaVenta && (
+                        <div style={{ fontSize: 12, color: 'var(--color-danger)', fontWeight: 600 }}>{p.notaVenta}</div>
+                      )}
                     </span>
                     <span className="badge badge-neutral">+ Agregar</span>
                   </div>
