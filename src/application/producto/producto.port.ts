@@ -14,6 +14,7 @@ export interface CrearProductoInput {
   unidadesPorPaquete?: number;
   unidadesPorCaja?: number;
   ventaSoloPorPaquete?: boolean;
+  unidadVenta?: string;
 }
 
 export interface ActualizarProductoInput {
@@ -25,6 +26,7 @@ export interface ActualizarProductoInput {
   unidadesPorPaquete?: number;
   unidadesPorCaja?: number;
   ventaSoloPorPaquete?: boolean;
+  unidadVenta?: string;
 }
 
 export interface ResultadoImportacion {

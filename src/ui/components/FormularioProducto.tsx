@@ -22,6 +22,7 @@ export function FormularioProducto({ productoInicial, onCancelar, onGuardar }: P
   );
   const [unidadesPorCaja, setUnidadesPorCaja] = useState(productoInicial?.unidadesPorCaja?.toString() ?? '');
   const [ventaSoloPorPaquete, setVentaSoloPorPaquete] = useState(productoInicial?.ventaSoloPorPaquete ?? false);
+  const [unidadVenta, setUnidadVenta] = useState(productoInicial?.unidadVenta ?? '');
   const [enviando, setEnviando] = useState(false);
 
   const handleSubmit = async (e: FormEvent) => {
@@ -39,6 +40,7 @@ export function FormularioProducto({ productoInicial, onCancelar, onGuardar }: P
         unidadesPorPaquete: unidadesPorPaquete ? Number(unidadesPorPaquete) : undefined,
         unidadesPorCaja: unidadesPorCaja ? Number(unidadesPorCaja) : undefined,
         ventaSoloPorPaquete,
+        unidadVenta: unidadVenta || undefined,
       });
     } finally {
       setEnviando(false);
@@ -96,6 +98,11 @@ export function FormularioProducto({ productoInicial, onCancelar, onGuardar }: P
           />
           Vender solo por paquete completo (no se puede vender suelto)
         </label>
+        <select className="saag-input-full" value={unidadVenta} onChange={(e) => setUnidadVenta(e.target.value)}>
+          <option value="">Unidad de venta: pcs (por defecto)</option>
+          <option value="par">Unidad de venta: par</option>
+          <option value="juego">Unidad de venta: juego</option>
+        </select>
 
         <div className="saag-modal-acciones">
           <button type="button" onClick={onCancelar} className="btn btn-secondary">

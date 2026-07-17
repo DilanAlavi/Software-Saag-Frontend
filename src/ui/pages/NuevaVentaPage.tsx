@@ -22,6 +22,7 @@ interface ItemCarrito {
   modoPaquete: boolean;
   unidadesPorPaquete: number | null;
   unidadesPorCaja: number | null;
+  unidadVenta: string | null;
 }
 
 function calcularModalidad(producto: Producto, sucursal?: Sucursal): ModalidadVentaPaquete {
@@ -63,15 +64,16 @@ function FilaCarrito({
     }
   };
 
+  const unidad = item.unidadVenta || 'pcs';
   return (
     <tr>
       <td>
         {item.nombre}
         {(item.unidadesPorCaja || item.modoPaquete) && (
           <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>
-            {item.unidadesPorCaja && `1 caja tiene ${item.unidadesPorCaja} pcs`}
+            {item.unidadesPorCaja && `1 caja tiene ${item.unidadesPorCaja} ${unidad}`}
             {item.unidadesPorCaja && item.modoPaquete && ', '}
-            {item.modoPaquete && `paquete cerrado de ${item.unidadesPorPaquete} pcs`}
+            {item.modoPaquete && `paquete cerrado de ${item.unidadesPorPaquete} ${unidad}`}
           </div>
         )}
       </td>
@@ -87,7 +89,11 @@ function FilaCarrito({
               if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
             }}
           />
-          {item.modoPaquete && <span style={{ fontSize: 13, color: 'var(--color-text-muted)' }}>paquete(s)</span>}
+          {item.modoPaquete && (
+            <span style={{ fontSize: 13, color: 'var(--color-text-muted)' }}>
+              {item.unidadVenta ? `${item.unidadVenta}(es)` : 'paquete(s)'}
+            </span>
+          )}
         </div>
       </td>
       <td>
@@ -201,6 +207,7 @@ export function NuevaVentaPage() {
           modoPaquete,
           unidadesPorPaquete: producto.unidadesPorPaquete,
           unidadesPorCaja: producto.unidadesPorCaja,
+          unidadVenta: producto.unidadVenta,
         },
       ];
     });
@@ -367,6 +374,7 @@ export function NuevaVentaPage() {
             ) : (
               productos.map((p) => {
                 const modoPaquete = calcularModalidad(p, sucursalActual) === 'PAQUETE' && !!p.unidadesPorPaquete;
+                const unidad = p.unidadVenta || 'pcs';
                 return (
                   <div
                     key={p.id}
@@ -386,9 +394,9 @@ export function NuevaVentaPage() {
                       {p.codigo && <span style={{ color: 'var(--color-text-muted)', fontSize: 12 }}> — {p.codigo}</span>}
                       {(p.unidadesPorCaja || modoPaquete) && (
                         <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>
-                          {p.unidadesPorCaja && `1 caja tiene ${p.unidadesPorCaja} pcs`}
+                          {p.unidadesPorCaja && `1 caja tiene ${p.unidadesPorCaja} ${unidad}`}
                           {p.unidadesPorCaja && modoPaquete && ', '}
-                          {modoPaquete && `se vende por paquete de ${p.unidadesPorPaquete} pcs`}
+                          {modoPaquete && `se vende por paquete de ${p.unidadesPorPaquete} ${unidad}`}
                         </div>
                       )}
                     </span>
