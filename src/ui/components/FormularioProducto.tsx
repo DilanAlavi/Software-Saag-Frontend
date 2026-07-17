@@ -23,6 +23,9 @@ export function FormularioProducto({ productoInicial, onCancelar, onGuardar }: P
   const [unidadesPorCaja, setUnidadesPorCaja] = useState(productoInicial?.unidadesPorCaja?.toString() ?? '');
   const [ventaSoloPorPaquete, setVentaSoloPorPaquete] = useState(productoInicial?.ventaSoloPorPaquete ?? false);
   const [unidadVenta, setUnidadVenta] = useState(productoInicial?.unidadVenta ?? '');
+  const [unidadVentaTamano, setUnidadVentaTamano] = useState(
+    productoInicial?.unidadVentaTamano?.toString() ?? '',
+  );
   const [enviando, setEnviando] = useState(false);
 
   const handleSubmit = async (e: FormEvent) => {
@@ -41,6 +44,7 @@ export function FormularioProducto({ productoInicial, onCancelar, onGuardar }: P
         unidadesPorCaja: unidadesPorCaja ? Number(unidadesPorCaja) : undefined,
         ventaSoloPorPaquete,
         unidadVenta: unidadVenta || undefined,
+        unidadVentaTamano: unidadVentaTamano ? Number(unidadVentaTamano) : undefined,
       });
     } finally {
       setEnviando(false);
@@ -103,6 +107,15 @@ export function FormularioProducto({ productoInicial, onCancelar, onGuardar }: P
           <option value="par">Unidad de venta: par</option>
           <option value="juego">Unidad de venta: juego</option>
         </select>
+        {unidadVenta && (
+          <input
+            className="saag-input-full"
+            placeholder={`Cuántas piezas hace 1 ${unidadVenta} (ej. 2)`}
+            type="number"
+            value={unidadVentaTamano}
+            onChange={(e) => setUnidadVentaTamano(e.target.value)}
+          />
+        )}
 
         <div className="saag-modal-acciones">
           <button type="button" onClick={onCancelar} className="btn btn-secondary">
