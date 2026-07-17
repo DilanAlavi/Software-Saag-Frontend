@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProductos } from '../../application/producto/useProductos';
+import { usePrecios } from '../../application/precio/usePrecios';
+import { Precio } from '../../domain/precio/precio.entity';
 import { useClientes } from '../../application/cliente/useClientes';
 import { useGruposPrecioEspecial } from '../../application/grupo-precio-especial/useGruposPrecioEspecial';
 import { grupoPrecioEspecialApiRepository } from '../../infrastructure/api/grupo-precio-especial.api';
@@ -47,6 +49,30 @@ function esRolMayorista(rol?: string): boolean {
  */
 function calcularModoCaja(unidadesPorPaquete: number | null, modalidadEfectiva: ModalidadVentaPaquete, rolCliente?: string): boolean {
   return Boolean(unidadesPorPaquete) && (modalidadEfectiva === 'PAQUETE' || esRolMayorista(rolCliente));
+}
+
+const MAPA_RUBRO_ROL: Record<string, string> = {
+  CARPINTERIA: 'CARPINTERIA',
+  PLOMERIA: 'PLOMERIA',
+  ELECTRICISTA: 'ELECTRICO',
+};
+
+/**
+ * Precio de referencia para mostrar al lado del código en el buscador — no es el precio final
+ * (eso lo calcula el motor de precios al agregar al carrito), es solo una guía rápida para
+ * el vendedor. Sin cliente elegido todavía, se muestra el de Standard 1 (el más alto).
+ */
+function precioReferencia(precio: Precio, tipoProducto: string, rolCliente?: string): number {
+  if (!rolCliente || rolCliente === 'STANDARD_1') return precio.menor1;
+  if (rolCliente === 'STANDARD_2') return precio.menor2;
+  if (rolCliente === 'MAYOR_1') return precio.mayor1;
+  if (rolCliente === 'MAYOR_2') return precio.mayor2;
+  if (MAPA_RUBRO_ROL[rolCliente] === tipoProducto) {
+    if (rolCliente === 'CARPINTERIA') return precio.carpinteria;
+    if (rolCliente === 'PLOMERIA') return precio.plomeria;
+    if (rolCliente === 'ELECTRICISTA') return precio.electricista;
+  }
+  return precio.menor2;
 }
 
 function FilaCarrito({
@@ -153,6 +179,8 @@ export function NuevaVentaPage() {
   const [buscarProducto, setBuscarProducto] = useState('');
   const filtrosProductos = useMemo(() => ({ search: buscarProducto || undefined }), [buscarProducto]);
   const { productos } = useProductos(filtrosProductos);
+  const { filas: filasPrecios } = usePrecios();
+  const preciosPorProducto = useMemo(() => new Map(filasPrecios.map((f) => [f.productoId, f.precio])), [filasPrecios]);
 
   const [buscarCliente, setBuscarCliente] = useState('');
   const filtrosClientes = useMemo(() => ({ search: buscarCliente || undefined }), [buscarCliente]);
@@ -415,6 +443,7 @@ export function NuevaVentaPage() {
                 const modoCaja = calcularModoCaja(p.unidadesPorPaquete, modalidadEfectiva, clienteSeleccionado?.rol);
                 const unidad = p.unidadVenta || 'pcs';
                 const paresPorCaja = p.unidadesPorPaquete && p.unidadVentaTamano ? p.unidadesPorPaquete / p.unidadVentaTamano : null;
+                const precioProducto = preciosPorProducto.get(p.id);
                 return (
                   <div
                     key={p.id}
@@ -432,6 +461,11 @@ export function NuevaVentaPage() {
                     <span>
                       {p.nombre}
                       {p.codigo && <span style={{ color: 'var(--color-text-muted)', fontSize: 12 }}> — {p.codigo}</span>}
+                      {precioProducto && (
+                        <span style={{ color: 'var(--color-danger)', fontSize: 12, fontWeight: 700 }}>
+                          {' '}Bs {precioReferencia(precioProducto, p.tipoProducto, clienteSeleccionado?.rol).toFixed(2)} {unidad}
+                        </span>
+                      )}
                       {(p.unidadesPorCaja || modoCaja) && (
                         <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>
                           {p.unidadesPorCaja && `1 caja tiene ${formatearCantidadUnidadVenta(p.unidadesPorCaja, p.unidadVentaTamano, unidad)}`}
