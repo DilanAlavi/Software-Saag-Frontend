@@ -21,6 +21,7 @@ interface ItemCarrito {
   total: number | null;
   modoPaquete: boolean;
   unidadesPorPaquete: number | null;
+  unidadesPorCaja: number | null;
 }
 
 function calcularModalidad(producto: Producto, sucursal?: Sucursal): ModalidadVentaPaquete {
@@ -68,6 +69,9 @@ function FilaCarrito({
         {item.nombre}
         {item.modoPaquete && (
           <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>Paquete cerrado de {item.unidadesPorPaquete} u.</div>
+        )}
+        {item.unidadesPorCaja && (
+          <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>1 caja tiene {item.unidadesPorCaja} u.</div>
         )}
       </td>
       <td>
@@ -195,6 +199,7 @@ export function NuevaVentaPage() {
           total: null,
           modoPaquete,
           unidadesPorPaquete: producto.unidadesPorPaquete,
+          unidadesPorCaja: producto.unidadesPorCaja,
         },
       ];
     });
@@ -380,6 +385,9 @@ export function NuevaVentaPage() {
                       {p.codigo && <span style={{ color: 'var(--color-text-muted)', fontSize: 12 }}> — {p.codigo}</span>}
                       {modoPaquete && (
                         <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>Se vende por paquete de {p.unidadesPorPaquete} u.</div>
+                      )}
+                      {p.unidadesPorCaja && (
+                        <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>1 caja tiene {p.unidadesPorCaja} u.</div>
                       )}
                     </span>
                     <span className="badge badge-neutral">+ Agregar</span>
