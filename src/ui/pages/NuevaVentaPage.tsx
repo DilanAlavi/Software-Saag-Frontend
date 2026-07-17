@@ -69,9 +69,9 @@ function FilaCarrito({
         {item.nombre}
         {(item.unidadesPorCaja || item.modoPaquete) && (
           <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>
-            {item.unidadesPorCaja && `1 caja tiene ${item.unidadesPorCaja} u.`}
+            {item.unidadesPorCaja && `1 caja tiene ${item.unidadesPorCaja} pcs`}
             {item.unidadesPorCaja && item.modoPaquete && ', '}
-            {item.modoPaquete && `paquete cerrado de ${item.unidadesPorPaquete} u.`}
+            {item.modoPaquete && `paquete cerrado de ${item.unidadesPorPaquete} pcs`}
           </div>
         )}
       </td>
@@ -386,9 +386,9 @@ export function NuevaVentaPage() {
                       {p.codigo && <span style={{ color: 'var(--color-text-muted)', fontSize: 12 }}> — {p.codigo}</span>}
                       {(p.unidadesPorCaja || modoPaquete) && (
                         <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>
-                          {p.unidadesPorCaja && `1 caja tiene ${p.unidadesPorCaja} u.`}
+                          {p.unidadesPorCaja && `1 caja tiene ${p.unidadesPorCaja} pcs`}
                           {p.unidadesPorCaja && modoPaquete && ', '}
-                          {modoPaquete && `se vende por paquete de ${p.unidadesPorPaquete} u.`}
+                          {modoPaquete && `se vende por paquete de ${p.unidadesPorPaquete} pcs`}
                         </div>
                       )}
                     </span>
