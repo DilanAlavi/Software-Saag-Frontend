@@ -23,6 +23,7 @@ export function ListadoVentas({ titulo, fechaFija, accionExtra, mensajeVacio }: 
   const [sucursalId, setSucursalId] = useState('');
   const [fecha, setFecha] = useState('');
   const [search, setSearch] = useState('');
+  const [searchTipo, setSearchTipo] = useState<'cliente' | 'vendedor'>('cliente');
   const [page, setPage] = useState(1);
   const { sucursales } = useSucursales();
 
@@ -32,10 +33,11 @@ export function ListadoVentas({ titulo, fechaFija, accionExtra, mensajeVacio }: 
       sucursalId: sucursalId ? Number(sucursalId) : undefined,
       fecha: fechaFija ?? (fecha || undefined),
       search: search || undefined,
+      searchTipo,
       page,
       pageSize: PAGE_SIZE,
     }),
-    [estado, sucursalId, fecha, fechaFija, search, page],
+    [estado, sucursalId, fecha, fechaFija, search, searchTipo, page],
   );
   const { ventas, total, cargando, pagar, cancelar, entregar, reportar, descargarProforma } = useVentas(filtros);
 
@@ -60,9 +62,18 @@ export function ListadoVentas({ titulo, fechaFija, accionExtra, mensajeVacio }: 
       </div>
 
       <div style={{ display: 'flex', gap: 10, marginBottom: 20, flexWrap: 'wrap' }}>
+        <select
+          className="input"
+          value={searchTipo}
+          onChange={(e) => cambiarFiltro(setSearchTipo)(e.target.value as 'cliente' | 'vendedor')}
+          style={{ maxWidth: 140 }}
+        >
+          <option value="cliente">Cliente</option>
+          <option value="vendedor">Vendedor</option>
+        </select>
         <input
           className="input"
-          placeholder="Buscar por nombre, apellido, CI o celular..."
+          placeholder={searchTipo === 'vendedor' ? 'Buscar por nombre o usuario del vendedor...' : 'Buscar por nombre, apellido, CI o celular...'}
           value={search}
           onChange={(e) => cambiarFiltro(setSearch)(e.target.value)}
           style={{ flex: 1, minWidth: 220 }}

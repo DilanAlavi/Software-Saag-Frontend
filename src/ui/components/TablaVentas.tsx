@@ -18,7 +18,7 @@ function claseBadgeEstado(estado: Venta['estado']) {
 
 export function TablaVentas({ ventas, onVerDetalle, onPagar, onCancelar, onEntregar, onReportar, onDescargarProforma }: Props) {
   return (
-    <div className="table-wrap">
+    <div className="table-wrap table-wrap-scroll">
       <table className="data-table">
         <thead>
           <tr>
