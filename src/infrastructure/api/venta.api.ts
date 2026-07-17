@@ -38,4 +38,8 @@ export const ventaApiRepository: VentaRepositoryPort = {
     const { data } = await httpClient.get(`/ventas/${id}/proforma`, { responseType: 'blob' });
     return data;
   },
+  async obtenerDeudas(search) {
+    const { data } = await httpClient.get('/ventas/deudas', { params: { search } });
+    return data;
+  },
 };

@@ -33,6 +33,13 @@ export interface VentaListado {
   total: number;
 }
 
+export interface DeudasResultado {
+  hoy: Venta[];
+  delMes: Venta[];
+  montoHoy: number;
+  montoDelMes: number;
+}
+
 export interface VentaRepositoryPort {
   cotizar(dto: CotizarVentaInput): Promise<VentaCotizada>;
   crear(dto: CrearVentaInput): Promise<Venta>;
@@ -43,4 +50,5 @@ export interface VentaRepositoryPort {
   entregar(id: number, detalleIds: number[]): Promise<Venta>;
   reportar(id: number, mensaje: string): Promise<Venta>;
   descargarProforma(id: number): Promise<Blob>;
+  obtenerDeudas(search?: string): Promise<DeudasResultado>;
 }
