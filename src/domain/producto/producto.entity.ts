@@ -13,6 +13,7 @@ export interface Producto {
   unidadesPorCaja: number | null;
   ventaSoloPorPaquete: boolean;
   unidadVenta: string | null;
+  unidadVentaTamano: number | null;
 }
 
 export const ETIQUETAS_TIPO_PRODUCTO: Record<TipoProducto, string> = {

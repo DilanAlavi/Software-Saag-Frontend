@@ -23,6 +23,13 @@ interface ItemCarrito {
   unidadesPorPaquete: number | null;
   unidadesPorCaja: number | null;
   unidadVenta: string | null;
+  unidadVentaTamano: number | null;
+}
+
+function formatearCantidadUnidadVenta(piezas: number | null, unidadVentaTamano: number | null, unidad: string): string {
+  if (piezas === null) return '';
+  if (unidadVentaTamano) return `${piezas / unidadVentaTamano} ${unidad}`;
+  return `${piezas} ${unidad}`;
 }
 
 function calcularModalidad(producto: Producto, sucursal?: Sucursal): ModalidadVentaPaquete {
@@ -71,9 +78,9 @@ function FilaCarrito({
         {item.nombre}
         {(item.unidadesPorCaja || item.modoPaquete) && (
           <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>
-            {item.unidadesPorCaja && `1 caja tiene ${item.unidadesPorCaja} ${unidad}`}
+            {item.unidadesPorCaja && `1 caja tiene ${formatearCantidadUnidadVenta(item.unidadesPorCaja, item.unidadVentaTamano, unidad)}`}
             {item.unidadesPorCaja && item.modoPaquete && ', '}
-            {item.modoPaquete && `paquete cerrado de ${item.unidadesPorPaquete} ${unidad}`}
+            {item.modoPaquete && `paquete cerrado de ${formatearCantidadUnidadVenta(item.unidadesPorPaquete, item.unidadVentaTamano, unidad)}`}
           </div>
         )}
       </td>
@@ -208,6 +215,7 @@ export function NuevaVentaPage() {
           unidadesPorPaquete: producto.unidadesPorPaquete,
           unidadesPorCaja: producto.unidadesPorCaja,
           unidadVenta: producto.unidadVenta,
+          unidadVentaTamano: producto.unidadVentaTamano,
         },
       ];
     });
@@ -394,9 +402,9 @@ export function NuevaVentaPage() {
                       {p.codigo && <span style={{ color: 'var(--color-text-muted)', fontSize: 12 }}> — {p.codigo}</span>}
                       {(p.unidadesPorCaja || modoPaquete) && (
                         <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>
-                          {p.unidadesPorCaja && `1 caja tiene ${p.unidadesPorCaja} ${unidad}`}
+                          {p.unidadesPorCaja && `1 caja tiene ${formatearCantidadUnidadVenta(p.unidadesPorCaja, p.unidadVentaTamano, unidad)}`}
                           {p.unidadesPorCaja && modoPaquete && ', '}
-                          {modoPaquete && `se vende por paquete de ${p.unidadesPorPaquete} ${unidad}`}
+                          {modoPaquete && `se vende por paquete de ${formatearCantidadUnidadVenta(p.unidadesPorPaquete, p.unidadVentaTamano, unidad)}`}
                         </div>
                       )}
                     </span>
