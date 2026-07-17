@@ -19,7 +19,7 @@ interface ItemCarrito {
   cantidad: number; // siempre en unidades sueltas reales
   precioUnitario: number | null;
   total: number | null;
-  modoPaquete: boolean;
+  modalidadEfectiva: ModalidadVentaPaquete;
   unidadesPorPaquete: number | null;
   unidadesPorCaja: number | null;
   unidadVenta: string | null;
@@ -37,24 +37,42 @@ function calcularModalidad(producto: Producto, sucursal?: Sucursal): ModalidadVe
   return sucursal?.modalidadVentaPaquete ?? 'PAQUETE';
 }
 
+function esRolMayorista(rol?: string): boolean {
+  return rol === 'MAYOR_1' || rol === 'MAYOR_2';
+}
+
+/**
+ * Un mayorista siempre compra caja cerrada, sin importar si la sucursal vende suelto también
+ * (AMBOS). El resto de clientes solo compra en modo caja si la sucursal es PAQUETE-only.
+ */
+function calcularModoCaja(unidadesPorPaquete: number | null, modalidadEfectiva: ModalidadVentaPaquete, rolCliente?: string): boolean {
+  return Boolean(unidadesPorPaquete) && (modalidadEfectiva === 'PAQUETE' || esRolMayorista(rolCliente));
+}
+
 function FilaCarrito({
   item,
+  rolCliente,
   cotizando,
   onCambiarCantidad,
   onQuitar,
 }: {
   item: ItemCarrito;
+  rolCliente?: string;
   cotizando: boolean;
   onCambiarCantidad: (cantidadReal: number) => void;
   onQuitar: () => void;
 }) {
-  const factor = item.modoPaquete ? item.unidadesPorPaquete ?? 1 : 1;
+  const modoCaja = calcularModoCaja(item.unidadesPorPaquete, item.modalidadEfectiva, rolCliente);
+  // Modo "par" (o la unidad de venta que sea): la cantidad y el precio unitario se muestran
+  // en esa unidad, no en piezas sueltas. No aplica si ya estamos en modo caja.
+  const modoUnidadVenta = !modoCaja && Boolean(item.unidadVentaTamano);
+  const factor = modoCaja ? item.unidadesPorPaquete ?? 1 : modoUnidadVenta ? item.unidadVentaTamano! : 1;
   const [texto, setTexto] = useState(String(item.cantidad / factor));
 
   useEffect(() => {
     setTexto(String(item.cantidad / factor));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [item.cantidad, item.modoPaquete]);
+  }, [item.cantidad, modoCaja, modoUnidadVenta]);
 
   const revertirSiInvalido = () => {
     const n = Number(texto);
@@ -72,15 +90,25 @@ function FilaCarrito({
   };
 
   const unidad = item.unidadVenta || 'pcs';
+  const paresPorCaja =
+    item.unidadesPorPaquete && item.unidadVentaTamano ? item.unidadesPorPaquete / item.unidadVentaTamano : null;
+  // El precio unitario y total que ya calculó el backend son siempre por pieza suelta;
+  // en modo "unidad de venta" se muestra multiplicado, para que coincida con la cantidad
+  // ingresada (ej. si la cantidad está en pares, el precio unitario también debe ser por par).
+  const precioMostrado = item.precioUnitario !== null ? item.precioUnitario * factor : null;
+
   return (
     <tr>
       <td>
         {item.nombre}
-        {(item.unidadesPorCaja || item.modoPaquete) && (
+        {(item.unidadesPorCaja || modoCaja) && (
           <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>
             {item.unidadesPorCaja && `1 caja tiene ${formatearCantidadUnidadVenta(item.unidadesPorCaja, item.unidadVentaTamano, unidad)}`}
-            {item.unidadesPorCaja && item.modoPaquete && ', '}
-            {item.modoPaquete && `paquete cerrado de ${formatearCantidadUnidadVenta(item.unidadesPorPaquete, item.unidadVentaTamano, unidad)}`}
+            {item.unidadesPorCaja && modoCaja && ', '}
+            {modoCaja &&
+              (paresPorCaja !== null
+                ? `caja (${paresPorCaja} ${unidad})`
+                : `paquete cerrado de ${item.unidadesPorPaquete} pcs`)}
           </div>
         )}
       </td>
@@ -96,16 +124,13 @@ function FilaCarrito({
               if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
             }}
           />
-          {item.modoPaquete && (
-            <span style={{ fontSize: 13, color: 'var(--color-text-muted)' }}>
-              {item.unidadVenta ? `${item.unidadVenta}(es)` : 'paquete(s)'}
-            </span>
-          )}
+          {modoCaja && <span style={{ fontSize: 13, color: 'var(--color-text-muted)' }}>caja(s)</span>}
+          {modoUnidadVenta && <span style={{ fontSize: 13, color: 'var(--color-text-muted)' }}>{unidad}(es)</span>}
         </div>
       </td>
       <td>
-        {item.precioUnitario !== null
-          ? `Bs ${item.precioUnitario.toFixed(2)}`
+        {precioMostrado !== null
+          ? `Bs ${precioMostrado.toFixed(2)}`
           : cotizando
             ? 'Calculando...'
             : 'Falta cliente y sucursal'}
@@ -133,7 +158,7 @@ export function NuevaVentaPage() {
   const filtrosClientes = useMemo(() => ({ search: buscarCliente || undefined }), [buscarCliente]);
   const { clientes, crear: crearCliente } = useClientes(filtrosClientes);
   const { grupos: gruposDisponibles } = useGruposPrecioEspecial();
-  const [clienteSeleccionado, setClienteSeleccionado] = useState<{ id: number; nombre: string } | null>(null);
+  const [clienteSeleccionado, setClienteSeleccionado] = useState<{ id: number; nombre: string; rol?: string } | null>(null);
   const [mostrarFormularioCliente, setMostrarFormularioCliente] = useState(false);
 
   const { sucursales } = useSucursales();
@@ -195,8 +220,13 @@ export function NuevaVentaPage() {
   }, [clienteSeleccionado?.id, sucursalEfectivaId, JSON.stringify(carrito.map((i) => [i.productoId, i.cantidad]))]);
 
   const agregarProductoAlCarrito = (producto: Producto) => {
-    const modoPaquete = calcularModalidad(producto, sucursalActual) === 'PAQUETE' && !!producto.unidadesPorPaquete;
-    const cantidadBase = modoPaquete ? producto.unidadesPorPaquete! : 1;
+    const modalidadEfectiva = calcularModalidad(producto, sucursalActual);
+    const modoCaja = calcularModoCaja(producto.unidadesPorPaquete, modalidadEfectiva, clienteSeleccionado?.rol);
+    const cantidadBase = modoCaja
+      ? producto.unidadesPorPaquete!
+      : producto.unidadVentaTamano
+        ? producto.unidadVentaTamano
+        : 1;
 
     setCarrito((actual) => {
       const existente = actual.find((item) => item.productoId === producto.id);
@@ -211,7 +241,7 @@ export function NuevaVentaPage() {
           cantidad: cantidadBase,
           precioUnitario: null,
           total: null,
-          modoPaquete,
+          modalidadEfectiva,
           unidadesPorPaquete: producto.unidadesPorPaquete,
           unidadesPorCaja: producto.unidadesPorCaja,
           unidadVenta: producto.unidadVenta,
@@ -321,7 +351,7 @@ export function NuevaVentaPage() {
                       <div
                         key={c.id}
                         onClick={() => {
-                          setClienteSeleccionado({ id: c.id, nombre: `${c.nombre} ${c.apellidoPaterno}` });
+                          setClienteSeleccionado({ id: c.id, nombre: `${c.nombre} ${c.apellidoPaterno}`, rol: c.rol });
                           setBuscarCliente('');
                         }}
                         style={{ padding: 10, cursor: 'pointer', borderBottom: '1px solid var(--color-border)', fontSize: 14 }}
@@ -381,8 +411,10 @@ export function NuevaVentaPage() {
               <p style={{ padding: 8, margin: 0, fontSize: 13 }}>Sin resultados.</p>
             ) : (
               productos.map((p) => {
-                const modoPaquete = calcularModalidad(p, sucursalActual) === 'PAQUETE' && !!p.unidadesPorPaquete;
+                const modalidadEfectiva = calcularModalidad(p, sucursalActual);
+                const modoCaja = calcularModoCaja(p.unidadesPorPaquete, modalidadEfectiva, clienteSeleccionado?.rol);
                 const unidad = p.unidadVenta || 'pcs';
+                const paresPorCaja = p.unidadesPorPaquete && p.unidadVentaTamano ? p.unidadesPorPaquete / p.unidadVentaTamano : null;
                 return (
                   <div
                     key={p.id}
@@ -400,11 +432,14 @@ export function NuevaVentaPage() {
                     <span>
                       {p.nombre}
                       {p.codigo && <span style={{ color: 'var(--color-text-muted)', fontSize: 12 }}> — {p.codigo}</span>}
-                      {(p.unidadesPorCaja || modoPaquete) && (
+                      {(p.unidadesPorCaja || modoCaja) && (
                         <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>
                           {p.unidadesPorCaja && `1 caja tiene ${formatearCantidadUnidadVenta(p.unidadesPorCaja, p.unidadVentaTamano, unidad)}`}
-                          {p.unidadesPorCaja && modoPaquete && ', '}
-                          {modoPaquete && `se vende por paquete de ${formatearCantidadUnidadVenta(p.unidadesPorPaquete, p.unidadVentaTamano, unidad)}`}
+                          {p.unidadesPorCaja && modoCaja && ', '}
+                          {modoCaja &&
+                            (paresPorCaja !== null
+                              ? `se vende por caja (${paresPorCaja} ${unidad})`
+                              : `se vende por paquete de ${p.unidadesPorPaquete} pcs`)}
                         </div>
                       )}
                     </span>
@@ -436,6 +471,7 @@ export function NuevaVentaPage() {
                 <FilaCarrito
                   key={item.productoId}
                   item={item}
+                  rolCliente={clienteSeleccionado?.rol}
                   cotizando={cotizando}
                   onCambiarCantidad={(cantidad) => cambiarCantidad(item.productoId, cantidad)}
                   onQuitar={() => quitarDelCarrito(item.productoId)}
