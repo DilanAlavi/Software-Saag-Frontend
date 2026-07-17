@@ -26,6 +26,8 @@ interface ItemCarrito {
   unidadesPorCaja: number | null;
   unidadVenta: string | null;
   unidadVentaTamano: number | null;
+  redondeoSiempreArriba: boolean;
+  notaVenta: string | null;
 }
 
 function formatearCantidadUnidadVenta(piezas: number | null, unidadVentaTamano: number | null, unidad: string): string {
@@ -46,8 +48,17 @@ function esRolMayorista(rol?: string): boolean {
 /**
  * Un mayorista siempre compra caja cerrada, sin importar si la sucursal vende suelto también
  * (AMBOS). El resto de clientes solo compra en modo caja si la sucursal es PAQUETE-only.
+ * Excepción: productos con "redondeoSiempreArriba" (ej. Grasa, que se vende de 3 en 3) usan
+ * una lógica distinta — siempre se ingresa en piezas sueltas, nunca en "cajas", y el motor de
+ * precios ajusta el precio solo según la cantidad exacta que se escriba.
  */
-function calcularModoCaja(unidadesPorPaquete: number | null, modalidadEfectiva: ModalidadVentaPaquete, rolCliente?: string): boolean {
+function calcularModoCaja(
+  unidadesPorPaquete: number | null,
+  modalidadEfectiva: ModalidadVentaPaquete,
+  rolCliente: string | undefined,
+  redondeoSiempreArriba: boolean,
+): boolean {
+  if (redondeoSiempreArriba) return false;
   return Boolean(unidadesPorPaquete) && (modalidadEfectiva === 'PAQUETE' || esRolMayorista(rolCliente));
 }
 
@@ -88,7 +99,7 @@ function FilaCarrito({
   onCambiarCantidad: (cantidadReal: number) => void;
   onQuitar: () => void;
 }) {
-  const modoCaja = calcularModoCaja(item.unidadesPorPaquete, item.modalidadEfectiva, rolCliente);
+  const modoCaja = calcularModoCaja(item.unidadesPorPaquete, item.modalidadEfectiva, rolCliente, item.redondeoSiempreArriba);
   // Modo "par" (o la unidad de venta que sea): la cantidad y el precio unitario se muestran
   // en esa unidad, no en piezas sueltas. No aplica si ya estamos en modo caja.
   const modoUnidadVenta = !modoCaja && Boolean(item.unidadVentaTamano);
@@ -136,6 +147,9 @@ function FilaCarrito({
                 ? `caja (${paresPorCaja} ${unidad})`
                 : `paquete cerrado de ${item.unidadesPorPaquete} pcs`)}
           </div>
+        )}
+        {item.notaVenta && (
+          <div style={{ fontSize: 12, color: 'var(--color-danger)', fontWeight: 600 }}>{item.notaVenta}</div>
         )}
       </td>
       <td>
@@ -249,12 +263,13 @@ export function NuevaVentaPage() {
 
   const agregarProductoAlCarrito = (producto: Producto) => {
     const modalidadEfectiva = calcularModalidad(producto, sucursalActual);
-    const modoCaja = calcularModoCaja(producto.unidadesPorPaquete, modalidadEfectiva, clienteSeleccionado?.rol);
-    const cantidadBase = modoCaja
-      ? producto.unidadesPorPaquete!
-      : producto.unidadVentaTamano
-        ? producto.unidadVentaTamano
-        : 1;
+    const modoCaja = calcularModoCaja(producto.unidadesPorPaquete, modalidadEfectiva, clienteSeleccionado?.rol, producto.redondeoSiempreArriba);
+    const cantidadBase =
+      modoCaja || producto.redondeoSiempreArriba
+        ? producto.unidadesPorPaquete ?? 1
+        : producto.unidadVentaTamano
+          ? producto.unidadVentaTamano
+          : 1;
 
     setCarrito((actual) => {
       const existente = actual.find((item) => item.productoId === producto.id);
@@ -274,6 +289,8 @@ export function NuevaVentaPage() {
           unidadesPorCaja: producto.unidadesPorCaja,
           unidadVenta: producto.unidadVenta,
           unidadVentaTamano: producto.unidadVentaTamano,
+          redondeoSiempreArriba: producto.redondeoSiempreArriba,
+          notaVenta: producto.notaVenta,
         },
       ];
     });
@@ -440,7 +457,7 @@ export function NuevaVentaPage() {
             ) : (
               productos.map((p) => {
                 const modalidadEfectiva = calcularModalidad(p, sucursalActual);
-                const modoCaja = calcularModoCaja(p.unidadesPorPaquete, modalidadEfectiva, clienteSeleccionado?.rol);
+                const modoCaja = calcularModoCaja(p.unidadesPorPaquete, modalidadEfectiva, clienteSeleccionado?.rol, p.redondeoSiempreArriba);
                 const unidad = p.unidadVenta || 'pcs';
                 const paresPorCaja = p.unidadesPorPaquete && p.unidadVentaTamano ? p.unidadesPorPaquete / p.unidadVentaTamano : null;
                 const precioProducto = preciosPorProducto.get(p.id);
