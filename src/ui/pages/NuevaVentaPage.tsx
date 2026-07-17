@@ -21,6 +21,7 @@ interface ItemCarrito {
   total: number | null;
   modoPaquete: boolean;
   unidadesPorPaquete: number | null;
+  unidadesPorCaja: number | null;
 }
 
 function calcularModalidad(producto: Producto, sucursal?: Sucursal): ModalidadVentaPaquete {
@@ -66,8 +67,12 @@ function FilaCarrito({
     <tr>
       <td>
         {item.nombre}
-        {item.modoPaquete && (
-          <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>Paquete cerrado de {item.unidadesPorPaquete} u.</div>
+        {(item.unidadesPorCaja || item.modoPaquete) && (
+          <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>
+            {item.unidadesPorCaja && `1 caja tiene ${item.unidadesPorCaja} pcs`}
+            {item.unidadesPorCaja && item.modoPaquete && ', '}
+            {item.modoPaquete && `paquete cerrado de ${item.unidadesPorPaquete} pcs`}
+          </div>
         )}
       </td>
       <td>
@@ -195,6 +200,7 @@ export function NuevaVentaPage() {
           total: null,
           modoPaquete,
           unidadesPorPaquete: producto.unidadesPorPaquete,
+          unidadesPorCaja: producto.unidadesPorCaja,
         },
       ];
     });
@@ -378,8 +384,12 @@ export function NuevaVentaPage() {
                     <span>
                       {p.nombre}
                       {p.codigo && <span style={{ color: 'var(--color-text-muted)', fontSize: 12 }}> — {p.codigo}</span>}
-                      {modoPaquete && (
-                        <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>Se vende por paquete de {p.unidadesPorPaquete} u.</div>
+                      {(p.unidadesPorCaja || modoPaquete) && (
+                        <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>
+                          {p.unidadesPorCaja && `1 caja tiene ${p.unidadesPorCaja} pcs`}
+                          {p.unidadesPorCaja && modoPaquete && ', '}
+                          {modoPaquete && `se vende por paquete de ${p.unidadesPorPaquete} pcs`}
+                        </div>
                       )}
                     </span>
                     <span className="badge badge-neutral">+ Agregar</span>

@@ -64,6 +64,9 @@ export function Sidebar({ usuario, abierto, onCerrar }: Props) {
             <NavLink to="/panel/ventas/nueva" className={({ isActive }) => (isActive ? 'activo' : '')}>
               Nueva venta
             </NavLink>
+            <NavLink to="/panel/cuentas-por-cobrar" className={({ isActive }) => (isActive ? 'activo' : '')}>
+              Cuentas por cobrar
+            </NavLink>
           </nav>
         )}
 

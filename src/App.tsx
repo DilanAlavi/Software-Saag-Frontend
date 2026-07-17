@@ -12,6 +12,7 @@ import { GruposPrecioEspecialPage } from './ui/pages/GruposPrecioEspecialPage';
 import { NuevaVentaPage } from './ui/pages/NuevaVentaPage';
 import { VentasPage } from './ui/pages/VentasPage';
 import { VentasDelDiaPage } from './ui/pages/VentasDelDiaPage';
+import { CuentasPorCobrarPage } from './ui/pages/CuentasPorCobrarPage';
 import { GananciasDelDiaPage } from './ui/pages/GananciasDelDiaPage';
 import { HistorialGananciasPage } from './ui/pages/HistorialGananciasPage';
 import { RutaPrivada } from './ui/RutaPrivada';
@@ -31,6 +32,7 @@ export default function App() {
             <Route path="/panel/ventas/nueva" element={<NuevaVentaPage />} />
             <Route path="/panel/ventas/dia" element={<VentasDelDiaPage />} />
             <Route path="/panel/ventas" element={<VentasPage />} />
+            <Route path="/panel/cuentas-por-cobrar" element={<CuentasPorCobrarPage />} />
             <Route element={<RutaAdmin />}>
               <Route path="/panel/ganancias/dia" element={<GananciasDelDiaPage />} />
               <Route path="/panel/ganancias" element={<HistorialGananciasPage />} />
