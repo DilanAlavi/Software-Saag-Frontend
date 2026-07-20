@@ -6,6 +6,14 @@ interface Props {
   onCerrar: () => void;
 }
 
+function formatearCantidad(cantidad: number, unidadVenta: string | null, unidadVentaTamano: number | null): string {
+  const unidad = unidadVenta || 'pc';
+  if (unidadVentaTamano) {
+    return `${cantidad / unidadVentaTamano} ${unidad}`;
+  }
+  return `${cantidad} ${unidad}`;
+}
+
 function claseBadgeEstado(estado: Venta['estado']) {
   if (estado === 'PAGADO') return 'badge badge-success';
   if (estado === 'CANCELADO') return 'badge badge-danger';
@@ -90,7 +98,7 @@ export function ModalDetalleVenta({ venta, onCerrar }: Props) {
               {venta.detalles.map((d) => (
                 <tr key={d.id}>
                   <td>{d.nombreProducto}</td>
-                  <td>{d.cantidad}</td>
+                  <td>{formatearCantidad(d.cantidad, d.unidadVenta, d.unidadVentaTamano)}</td>
                   <td>Bs {d.precioUnitario.toFixed(2)}</td>
                   <td>Bs {d.total.toFixed(2)}</td>
                   <td>
