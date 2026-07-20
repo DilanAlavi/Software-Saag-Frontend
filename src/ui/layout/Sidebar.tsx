@@ -30,6 +30,14 @@ export function Sidebar({ usuario, abierto, onCerrar }: Props) {
       <div className="saag-sidebar-contenido">
         <div className="saag-sidebar-brand">SAAG Software</div>
 
+        <NavLink
+          to="/inicio"
+          className={({ isActive }) => `saag-menu-item${isActive ? ' activo' : ''}`}
+          onClick={onCerrar}
+        >
+          Inicio
+        </NavLink>
+
         {tieneAccesoPanel && (
           <>
             <button className="saag-menu-item" onClick={() => alternar('administracion')}>

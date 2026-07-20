@@ -9,6 +9,7 @@ export interface UsuarioAutenticado {
   apellidoPaterno: string;
   rol: 'ADMIN' | 'ADMIN_SUCURSAL' | 'VENDEDOR';
   sucursalId: number | null;
+  sucursal: { id: number; nombre: string } | null;
 }
 
 export interface SesionAuth {
