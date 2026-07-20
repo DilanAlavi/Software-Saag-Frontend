@@ -133,14 +133,16 @@ function FilaCarrito({
     <tr>
       <td>
         {item.nombre}
-        {(item.unidadesPorCaja || modoCaja) && (
+        {(item.unidadesPorCaja || item.unidadesPorPaquete) && (
           <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>
             {item.unidadesPorCaja && `1 caja tiene ${formatearCantidadUnidadVenta(item.unidadesPorCaja, item.unidadVentaTamano, unidad)}`}
-            {item.unidadesPorCaja && modoCaja && ', '}
-            {modoCaja &&
-              (paresPorCaja !== null
-                ? `caja (${paresPorCaja} ${unidad})`
-                : `paquete cerrado de ${item.unidadesPorPaquete} pcs`)}
+            {item.unidadesPorCaja && item.unidadesPorPaquete && ', '}
+            {item.unidadesPorPaquete &&
+              (modoCaja
+                ? paresPorCaja !== null
+                  ? `se vende por caja (${paresPorCaja} ${unidad})`
+                  : `paquete cerrado de ${item.unidadesPorPaquete} pcs`
+                : `1 paquete tiene ${formatearCantidadUnidadVenta(item.unidadesPorPaquete, item.unidadVentaTamano, unidad)}`)}
           </div>
         )}
         {item.notaVenta && (
@@ -478,14 +480,16 @@ export function NuevaVentaPage() {
                           {' '}Bs {precioReferencia(precioProducto, p.tipoProducto, clienteSeleccionado?.rol).toFixed(2)} {unidad}
                         </span>
                       )}
-                      {(p.unidadesPorCaja || modoCaja) && (
+                      {(p.unidadesPorCaja || p.unidadesPorPaquete) && (
                         <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>
                           {p.unidadesPorCaja && `1 caja tiene ${formatearCantidadUnidadVenta(p.unidadesPorCaja, p.unidadVentaTamano, unidad)}`}
-                          {p.unidadesPorCaja && modoCaja && ', '}
-                          {modoCaja &&
-                            (paresPorCaja !== null
-                              ? `se vende por caja (${paresPorCaja} ${unidad})`
-                              : `se vende por paquete de ${p.unidadesPorPaquete} pcs`)}
+                          {p.unidadesPorCaja && p.unidadesPorPaquete && ', '}
+                          {p.unidadesPorPaquete &&
+                            (modoCaja
+                              ? paresPorCaja !== null
+                                ? `se vende por caja (${paresPorCaja} ${unidad})`
+                                : `se vende por paquete de ${p.unidadesPorPaquete} pcs`
+                              : `1 paquete tiene ${formatearCantidadUnidadVenta(p.unidadesPorPaquete, p.unidadVentaTamano, unidad)}`)}
                         </div>
                       )}
                       {p.notaVenta && (
