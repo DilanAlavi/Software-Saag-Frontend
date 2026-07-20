@@ -30,6 +30,7 @@ export function FormularioProducto({ productoInicial, onCancelar, onGuardar }: P
     productoInicial?.redondeoSiempreArriba ?? false,
   );
   const [notaVenta, setNotaVenta] = useState(productoInicial?.notaVenta ?? '');
+  const [nombreParaProforma, setNombreParaProforma] = useState(productoInicial?.nombreParaProforma ?? '');
   const [enviando, setEnviando] = useState(false);
 
   const handleSubmit = async (e: FormEvent) => {
@@ -51,6 +52,7 @@ export function FormularioProducto({ productoInicial, onCancelar, onGuardar }: P
         unidadVentaTamano: unidadVentaTamano ? Number(unidadVentaTamano) : undefined,
         redondeoSiempreArriba,
         notaVenta: notaVenta || undefined,
+        nombreParaProforma: nombreParaProforma || undefined,
       });
     } finally {
       setEnviando(false);
@@ -135,6 +137,12 @@ export function FormularioProducto({ productoInicial, onCancelar, onGuardar }: P
           placeholder='Aviso para el vendedor (ej. "Se vende de 3 en 3")'
           value={notaVenta}
           onChange={(e) => setNotaVenta(e.target.value)}
+        />
+        <input
+          className="saag-input-full"
+          placeholder='Nombre para la proforma (opcional, ej. "Cinta M" en vez del nombre real)'
+          value={nombreParaProforma}
+          onChange={(e) => setNombreParaProforma(e.target.value)}
         />
 
         <div className="saag-modal-acciones">

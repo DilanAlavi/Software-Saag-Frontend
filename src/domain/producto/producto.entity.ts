@@ -16,6 +16,7 @@ export interface Producto {
   unidadVentaTamano: number | null;
   redondeoSiempreArriba: boolean;
   notaVenta: string | null;
+  nombreParaProforma: string | null;
 }
 
 export const ETIQUETAS_TIPO_PRODUCTO: Record<TipoProducto, string> = {

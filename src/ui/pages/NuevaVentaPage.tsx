@@ -41,13 +41,9 @@ function calcularModalidad(producto: Producto, sucursal?: Sucursal): ModalidadVe
   return sucursal?.modalidadVentaPaquete ?? 'PAQUETE';
 }
 
-function esRolMayorista(rol?: string): boolean {
-  return rol === 'MAYOR_1' || rol === 'MAYOR_2';
-}
-
 /**
- * Un mayorista siempre compra caja cerrada, sin importar si la sucursal vende suelto también
- * (AMBOS). El resto de clientes solo compra en modo caja si la sucursal es PAQUETE-only.
+ * El modo caja depende solo del producto y la sucursal (modalidadEfectiva), nunca del rol del
+ * cliente — si la sucursal vende suelto, cualquier rol puede comprar suelto ahí.
  * Excepción: productos con "redondeoSiempreArriba" (ej. Grasa, que se vende de 3 en 3) usan
  * una lógica distinta — siempre se ingresa en piezas sueltas, nunca en "cajas", y el motor de
  * precios ajusta el precio solo según la cantidad exacta que se escriba.
@@ -55,11 +51,10 @@ function esRolMayorista(rol?: string): boolean {
 function calcularModoCaja(
   unidadesPorPaquete: number | null,
   modalidadEfectiva: ModalidadVentaPaquete,
-  rolCliente: string | undefined,
   redondeoSiempreArriba: boolean,
 ): boolean {
   if (redondeoSiempreArriba) return false;
-  return Boolean(unidadesPorPaquete) && (modalidadEfectiva === 'PAQUETE' || esRolMayorista(rolCliente));
+  return Boolean(unidadesPorPaquete) && modalidadEfectiva === 'PAQUETE';
 }
 
 const MAPA_RUBRO_ROL: Record<string, string> = {
@@ -99,7 +94,7 @@ function FilaCarrito({
   onCambiarCantidad: (cantidadReal: number) => void;
   onQuitar: () => void;
 }) {
-  const modoCaja = calcularModoCaja(item.unidadesPorPaquete, item.modalidadEfectiva, rolCliente, item.redondeoSiempreArriba);
+  const modoCaja = calcularModoCaja(item.unidadesPorPaquete, item.modalidadEfectiva, item.redondeoSiempreArriba);
   // Modo "par" (o la unidad de venta que sea): la cantidad y el precio unitario se muestran
   // en esa unidad, no en piezas sueltas. No aplica si ya estamos en modo caja.
   const modoUnidadVenta = !modoCaja && Boolean(item.unidadVentaTamano);
@@ -263,7 +258,7 @@ export function NuevaVentaPage() {
 
   const agregarProductoAlCarrito = (producto: Producto) => {
     const modalidadEfectiva = calcularModalidad(producto, sucursalActual);
-    const modoCaja = calcularModoCaja(producto.unidadesPorPaquete, modalidadEfectiva, clienteSeleccionado?.rol, producto.redondeoSiempreArriba);
+    const modoCaja = calcularModoCaja(producto.unidadesPorPaquete, modalidadEfectiva, producto.redondeoSiempreArriba);
     const cantidadBase =
       modoCaja || producto.redondeoSiempreArriba
         ? producto.unidadesPorPaquete ?? 1
@@ -457,7 +452,7 @@ export function NuevaVentaPage() {
             ) : (
               productos.map((p) => {
                 const modalidadEfectiva = calcularModalidad(p, sucursalActual);
-                const modoCaja = calcularModoCaja(p.unidadesPorPaquete, modalidadEfectiva, clienteSeleccionado?.rol, p.redondeoSiempreArriba);
+                const modoCaja = calcularModoCaja(p.unidadesPorPaquete, modalidadEfectiva, p.redondeoSiempreArriba);
                 const unidad = p.unidadVenta || 'pcs';
                 const paresPorCaja = p.unidadesPorPaquete && p.unidadVentaTamano ? p.unidadesPorPaquete / p.unidadVentaTamano : null;
                 const precioProducto = preciosPorProducto.get(p.id);
