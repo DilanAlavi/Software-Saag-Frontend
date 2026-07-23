@@ -1,4 +1,7 @@
+import { useState } from 'react';
 import { ETIQUETAS_ESTADO_VENTA, Venta } from '../../domain/venta/venta.entity';
+import { construirTicket } from '../../application/impresion/ticket58mm';
+import { imprimirTicket58mm } from '../../application/impresion/imprimirBluetooth';
 
 interface Props {
   ventas: Venta[];
@@ -17,6 +20,35 @@ function claseBadgeEstado(estado: Venta['estado']) {
 }
 
 export function TablaVentas({ ventas, onVerDetalle, onPagar, onCancelar, onEntregar, onReportar, onDescargarProforma }: Props) {
+  const [imprimiendoId, setImprimiendoId] = useState<number | null>(null);
+
+  const handleImprimir = async (venta: Venta) => {
+    setImprimiendoId(venta.id);
+    try {
+      const texto = construirTicket({
+        id: venta.id,
+        fecha: venta.fecha,
+        cliente: `${venta.cliente.nombre} ${venta.cliente.apellidoPaterno}`,
+        atendidoPor: `${venta.usuario.nombre} ${venta.usuario.apellidoPaterno}`,
+        sucursal: venta.sucursal.nombre,
+        items: venta.detalles.map((d) => ({
+          nombre: d.nombreProducto,
+          cantidad: d.cantidad,
+          unidadVenta: d.unidadVenta,
+          unidadVentaTamano: d.unidadVentaTamano,
+          precioUnitario: d.precioUnitario,
+          total: d.total,
+        })),
+        total: venta.total,
+      });
+      await imprimirTicket58mm(texto);
+    } catch (e: any) {
+      alert(e?.message || 'No se pudo imprimir el ticket.');
+    } finally {
+      setImprimiendoId(null);
+    }
+  };
+
   return (
     <div className="table-wrap table-wrap-scroll">
       <table className="data-table">
@@ -77,6 +109,13 @@ export function TablaVentas({ ventas, onVerDetalle, onPagar, onCancelar, onEntre
                     </button>
                     <button className="btn btn-secondary btn-sm" onClick={() => onDescargarProforma(venta.id)}>
                       Proforma
+                    </button>
+                    <button
+                      className="btn btn-secondary btn-sm"
+                      disabled={imprimiendoId === venta.id}
+                      onClick={() => handleImprimir(venta)}
+                    >
+                      {imprimiendoId === venta.id ? 'Imprimiendo...' : 'Imprimir'}
                     </button>
                   </div>
                 </td>
