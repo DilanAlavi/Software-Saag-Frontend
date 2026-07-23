@@ -28,10 +28,11 @@ function construirBytesEscPos(texto: string): Uint8Array {
   const cuerpo = encoder.encode(`${limpio}\n`);
   const init = new Uint8Array([ESC, 0x40]); // inicializa la impresora
   // Este modelo no tiene cuchilla de corte automatico: en vez de mandar el comando de
-  // corte (que no hace nada), avanzamos ~2,5cm de papel en blanco para poder cortar a mano
+  // corte (que no hace nada), avanzamos ~4cm de papel en blanco para poder cortar a mano
   // comodo. ESC J n avanza n dots (aprox 0,125mm cada uno en la mayoria de impresoras
-  // termicas de 203dpi); n=200 son unos 25mm.
-  const avancePapel = new Uint8Array([ESC, 0x4a, 200]);
+  // termicas de 203dpi) pero n es un solo byte (max 255 = ~32mm), asi que se manda dos
+  // veces para llegar a los ~40mm.
+  const avancePapel = new Uint8Array([ESC, 0x4a, 160, ESC, 0x4a, 160]);
   const resultado = new Uint8Array(init.length + cuerpo.length + avancePapel.length);
   resultado.set(init, 0);
   resultado.set(cuerpo, init.length);
