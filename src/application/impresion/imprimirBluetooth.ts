@@ -25,13 +25,19 @@ function quitarAcentos(texto: string): string {
 function construirBytesEscPos(texto: string): Uint8Array {
   const limpio = quitarAcentos(texto);
   const encoder = new TextEncoder();
-  const cuerpo = encoder.encode(`${limpio}\n`);
+  // Bastante papel de sobra antes de cortar: si no se alimenta lo suficiente,
+  // la cuchilla puede quedar justo donde termino de imprimir y no tener nada que cortar.
+  const cuerpo = encoder.encode(`${limpio}\n\n\n\n\n`);
   const init = new Uint8Array([ESC, 0x40]); // inicializa la impresora
-  const corte = new Uint8Array([GS, 0x56, 0x00]); // corte de papel (si el modelo no corta, se ignora sin error)
-  const resultado = new Uint8Array(init.length + cuerpo.length + corte.length);
+  // Se mandan dos variantes del comando de corte (distintos modelos usan una u otra);
+  // si el modelo no tiene cuchilla, ambas se ignoran sin error.
+  const corteA = new Uint8Array([GS, 0x56, 0x42, 0x00]); // corte parcial con avance 0
+  const corteB = new Uint8Array([GS, 0x56, 0x00]); // corte total (variante mas vieja/simple)
+  const resultado = new Uint8Array(init.length + cuerpo.length + corteA.length + corteB.length);
   resultado.set(init, 0);
   resultado.set(cuerpo, init.length);
-  resultado.set(corte, init.length + cuerpo.length);
+  resultado.set(corteA, init.length + cuerpo.length);
+  resultado.set(corteB, init.length + cuerpo.length + corteA.length);
   return resultado;
 }
 
