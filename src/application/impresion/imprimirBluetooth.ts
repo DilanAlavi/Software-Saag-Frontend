@@ -25,19 +25,17 @@ function quitarAcentos(texto: string): string {
 function construirBytesEscPos(texto: string): Uint8Array {
   const limpio = quitarAcentos(texto);
   const encoder = new TextEncoder();
-  // Bastante papel de sobra antes de cortar: si no se alimenta lo suficiente,
-  // la cuchilla puede quedar justo donde termino de imprimir y no tener nada que cortar.
-  const cuerpo = encoder.encode(`${limpio}\n\n\n\n\n`);
+  const cuerpo = encoder.encode(`${limpio}\n`);
   const init = new Uint8Array([ESC, 0x40]); // inicializa la impresora
-  // Se mandan dos variantes del comando de corte (distintos modelos usan una u otra);
-  // si el modelo no tiene cuchilla, ambas se ignoran sin error.
-  const corteA = new Uint8Array([GS, 0x56, 0x42, 0x00]); // corte parcial con avance 0
-  const corteB = new Uint8Array([GS, 0x56, 0x00]); // corte total (variante mas vieja/simple)
-  const resultado = new Uint8Array(init.length + cuerpo.length + corteA.length + corteB.length);
+  // Este modelo no tiene cuchilla de corte automatico: en vez de mandar el comando de
+  // corte (que no hace nada), avanzamos ~2,5cm de papel en blanco para poder cortar a mano
+  // comodo. ESC J n avanza n dots (aprox 0,125mm cada uno en la mayoria de impresoras
+  // termicas de 203dpi); n=200 son unos 25mm.
+  const avancePapel = new Uint8Array([ESC, 0x4a, 200]);
+  const resultado = new Uint8Array(init.length + cuerpo.length + avancePapel.length);
   resultado.set(init, 0);
   resultado.set(cuerpo, init.length);
-  resultado.set(corteA, init.length + cuerpo.length);
-  resultado.set(corteB, init.length + cuerpo.length + corteA.length);
+  resultado.set(avancePapel, init.length + cuerpo.length);
   return resultado;
 }
 
