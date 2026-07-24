@@ -73,7 +73,7 @@ export function construirTicket(datos: DatosTicket): string {
   datos.items.forEach((item, i) => {
     if (i > 0) lineas.push('');
     lineas.push(...envolver(item.nombre));
-    lineas.push(filaColumnas('CANT', 'PRECIO', 'TOTAL'));
+    if (i === 0) lineas.push(filaColumnas('CANT', 'PRECIO', 'TOTAL'));
     lineas.push(
       filaColumnas(
         formatearCantidad(item.cantidad, item.unidadVenta, item.unidadVentaTamano),
